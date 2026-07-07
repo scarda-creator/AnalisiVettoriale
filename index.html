@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Analisi Vettoriale — Secondo Esonero</title>
+
+<!-- ===== KaTeX (CDN jsDelivr) ===== -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<style>
+  :root{
+    --bg:#0e1117; --panel:#161b22; --panel2:#1c232d; --border:#2b333d;
+    --txt:#e6edf3; --muted:#9aa7b4; --accent:#4c8dff; --accent2:#7aa2ff;
+    --ok:#2ea043; --okbg:#10331b; --bad:#d83a3a; --badbg:#3a1414;
+    --warn:#d8a13a; --warnbg:#332a10;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    font-size:17px;line-height:1.5;}
+  .wrap{max-width:820px;margin:0 auto;padding:24px 18px 80px;}
+  h1{font-size:1.5rem;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:.92rem;margin:0 0 22px;}
+  .hidden{display:none!important;}
+
+  /* ---- MENU ---- */
+  .mode-row{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+  .mode-btn{flex:1;min-width:220px;border:1px solid var(--border);background:var(--panel);
+    color:var(--txt);padding:16px;border-radius:12px;cursor:pointer;text-align:left;
+    transition:.15s;}
+  .mode-btn:hover{border-color:var(--accent);background:var(--panel2);}
+  .mode-btn b{font-size:1.05rem;}
+  .mode-btn span{display:block;color:var(--muted);font-size:.85rem;margin-top:4px;}
+  .mode-btn.primary{border-color:var(--accent);background:#13233f;}
+
+  .pool-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:640px){.pool-grid{grid-template-columns:1fr;}}
+  .pool-card{border:1px solid var(--border);background:var(--panel);border-radius:12px;
+    padding:14px;cursor:pointer;transition:.15s;position:relative;}
+  .pool-card:hover{border-color:var(--accent);background:var(--panel2);}
+  .pool-card.empty{opacity:.55;cursor:not-allowed;}
+  .pool-card.empty:hover{border-color:var(--border);background:var(--panel);}
+  .pool-card .n{font-weight:600;font-size:.98rem;}
+  .pool-card .meta{color:var(--muted);font-size:.8rem;margin-top:6px;}
+  .badge{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 8px;
+    border-radius:20px;margin-top:8px;letter-spacing:.3px;}
+  .badge.full{background:var(--okbg);color:#5fd980;border:1px solid #235c33;}
+  .badge.todo{background:var(--warnbg);color:#e0b85a;border:1px solid #5c4a23;}
+
+  /* ---- QUIZ ---- */
+  .qhead{display:flex;justify-content:space-between;align-items:center;
+    color:var(--muted);font-size:.82rem;margin-bottom:14px;gap:12px;}
+  .qhead .src{font-style:italic;}
+  .progress{height:5px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-bottom:18px;}
+  .progress > i{display:block;height:100%;background:var(--accent);width:0;transition:.3s;}
+
+  .fig{background:var(--panel);border:1px solid var(--border);border-radius:10px;
+    padding:12px;margin:0 0 16px;text-align:center;overflow-x:auto;}
+  .qtext{font-size:1.08rem;margin:0 0 18px;}
+  .qtext .lbl{display:inline-block;background:var(--panel2);border:1px solid var(--border);
+    color:var(--accent2);font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:6px;
+    margin-right:8px;vertical-align:middle;}
+
+  .opts{display:flex;flex-direction:column;gap:10px;}
+  .opt{border:1px solid var(--border);background:var(--panel);color:var(--txt);
+    padding:13px 15px;border-radius:10px;cursor:pointer;text-align:left;
+    font-size:1rem;transition:.12s;}
+  .opt:hover:not(:disabled){border-color:var(--accent);background:var(--panel2);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{border-color:var(--ok);background:var(--okbg);}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg);}
+
+  .fb{margin-top:16px;border-radius:10px;padding:14px;font-size:.95rem;display:none;}
+  .fb.show{display:block;}
+  .fb.hint{background:var(--badbg);border:1px solid #6b2222;}
+  .fb.hint b{color:#ff8585;}
+  .fb.sol{background:var(--okbg);border:1px solid #235c33;}
+  .fb.sol b{color:#5fd980;}
+
+  .navrow{margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+  .cont{background:var(--accent);color:#fff;border:none;padding:12px 20px;border-radius:10px;
+    font-size:1rem;font-weight:600;cursor:pointer;transition:.12s;}
+  .cont:hover{background:var(--accent2);}
+  .menu-btn{background:transparent;color:var(--muted);border:1px solid var(--border);
+    padding:10px 16px;border-radius:10px;cursor:pointer;font-size:.9rem;}
+  .menu-btn:hover{color:var(--txt);border-color:var(--accent);}
+
+  .end{text-align:center;padding:40px 10px;}
+  .end h2{font-size:1.4rem;}
+  .end .score{font-size:2.2rem;font-weight:700;color:var(--accent2);margin:10px 0;}
+
+  .katex{font-size:1.02em;}
+  .katex-display{margin:.4em 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===================== MENU ===================== -->
+  <section id="menu">
+    <h1>Quiz Analisi Vettoriale — Secondo Esonero</h1>
+    <p class="sub">Sapienza · Fisica. Difficolt&agrave; calibrata sugli esami in banca-dati (2022&ndash;2025). Risposta sbagliata &rarr; suggerimento mirato sul trabocchetto reale. Formule renderizzate con KaTeX.</p>
+
+    <div class="mode-row">
+      <button class="mode-btn primary" onclick="start('ALL')">
+        <b>&#127922; Mischia tutto</b>
+        <span>Tutte le domande dei pool disponibili, in ordine casuale.</span>
+      </button>
+    </div>
+
+    <div class="pool-grid" id="poolGrid"></div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section id="quiz" class="hidden">
+    <div class="qhead">
+      <span id="qpool"></span>
+      <span id="qpos"></span>
+    </div>
+    <div class="progress"><i id="qbar"></i></div>
+
+    <div class="fig hidden" id="qfig"></div>
+    <p class="qtext" id="qtext"></p>
+    <div class="opts" id="qopts"></div>
+
+    <div class="fb hint" id="qhint"></div>
+    <div class="fb sol" id="qsol"></div>
+
+    <div class="navrow">
+      <button class="menu-btn" onclick="toMenu()">&#8592; Menu</button>
+      <button class="cont hidden" id="qcont"></button>
+    </div>
+  </section>
+
+  <!-- ===================== END ===================== -->
+  <section id="end" class="hidden">
+    <div class="end">
+      <h2>Pool completato</h2>
+      <div class="score" id="endScore"></div>
+      <p class="sub" id="endMsg"></p>
+      <button class="cont" onclick="toMenu()">Torna al menu</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   RENDERING MATEMATICO — KaTeX su contenuto iniettato dinamicamente
+   Ogni volta che si scrive innerHTML con LaTeX, chiamare typeset(node).
+   ===================================================================== */
+function typeset(el){
+  if(el && window.renderMathInElement){
+    try{
+      renderMathInElement(el,{
+        delimiters:[
+          {left:'$$',right:'$$',display:true},
+          {left:'$',right:'$',display:false}
+        ],
+        throwOnError:false
+      });
+    }catch(e){/* no-op */}
+  }
+}
+function shuffle(a){
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+  return a;
+}
+
+/* =====================================================================
+   DEFINIZIONE POOL (ordine = mappa-esercizi, priorit&agrave; decrescente)
+   status: 'full' = popolato | 'todo' = da estendere (secondo dispatch)
+   ===================================================================== */
+var POOLS = [
+  {id:'edo',       name:'1 &middot; EDO / Cauchy &mdash; analisi qualitativa', diff:'3&ndash;4', status:'full'},
+  {id:'superfici', name:'2 &middot; Superfici: parametrizzazione, area, bordo', diff:'3&ndash;4', status:'full'},
+  {id:'curve',     name:'3 &middot; Curve &amp; integrali di linea', diff:'3', status:'full'},
+  {id:'gauss',     name:'4 &middot; Volume + flusso (Divergenza / Gauss)', diff:'3', status:'full'},
+  {id:'stokes',    name:'5 &middot; Stokes / circuitazione', diff:'3&ndash;4', status:'full'},
+  {id:'ottim',     name:'6 &middot; Ottimizzazione (liberi &amp; Lagrange)', diff:'3&ndash;4', status:'full'},
+  {id:'serie',     name:'7 &middot; Serie e successioni di funzioni', diff:'3&ndash;4', status:'full'},
+  {id:'conserv',   name:'8 &middot; Campi conservativi / potenziale', diff:'3', status:'full'},
+  {id:'diff',      name:'9 &middot; Differenziabilit&agrave; con parametro', diff:'4', status:'full'},
+  {id:'dini',      name:'10 &middot; Funzioni implicite / Dini', diff:'3&ndash;4', status:'full'}
+];
+
+/* =====================================================================
+   BANCA DATI DOMANDE
+   unit = { pool, src, steps:[ {t, opts:[{x,c?}], hint, sol, cont?} ] }
+   Tutto il testo matematico in LaTeX con delimitatori $...$ e $$...$$.
+   ===================================================================== */
+var Q = {};
+
+/* ---------- POOL 1 : EDO / CAUCHY QUALITATIVO (FULL) ---------- */
+Q.edo = [
+
+  { pool:"edo", src:"20240122 · trappola soluzione",
+    steps:[{
+      t:"Per il problema $y'=f(t,y)$, $y(t_0)=y_0$, il teorema di Cauchy–Lipschitz garantisce esistenza e unicità LOCALE se:",
+      opts:[
+        {x:"$f(t,u)$ è $C^1$ (o localmente lipschitziana in $u$) in un intorno di $(t_0,y_0)$", c:true},
+        {x:"$f(t,y(t))$ è $C^1$ lungo la soluzione"},
+        {x:"la soluzione $y(t)$ è continua"},
+        {x:"$f$ è limitata su tutto $\\mathbb{R}^2$"}
+      ],
+      hint:"La lipschitzianità va richiesta su $f$ come funzione delle due variabili INDIPENDENTI $(t,u)$, non sulla composizione $f(t,y(t))$ con una soluzione che ancora non esiste.",
+      sol:"Cauchy–Lipschitz richiede $f(t,u)$ continua e localmente lipschitziana in $u$ (garantita da $f\\in C^1$) in un intorno del dato. Scrivere '$f(t,y(t))\\in C^1$' è l'errore concettuale segnalato nella soluzione del 22/01/2024: confonde il campo con la sua composizione con l'incognita."
+    }]
+  },
+
+  { pool:"edo", src:"20240704 Es.5",
+    steps:[
+     { t:"Considera $y'=\\dfrac{y(y-2)}{1+t}$, $y(0)=1$, $t\\ge 0$. Senza risolvere, cosa si può affermare?",
+       opts:[
+         {x:"$0<y(t)<2$ per ogni $t$: le costanti $y\\equiv 0$ e $y\\equiv 2$ sono barriere invalicabili per unicità", c:true},
+         {x:"$y(t)$ può superare $y=2$ se $t$ è grande"},
+         {x:"$y(t)\\to 2$ perché $2$ è un equilibrio attrattivo"},
+         {x:"$y$ esplode in tempo finito"}
+       ],
+       hint:"$y\\equiv 0$ e $y\\equiv 2$ annullano il campo: sono soluzioni costanti. Per unicità due soluzioni distinte non si intersecano mai.",
+       sol:"$f(t,u)=\\dfrac{u(u-2)}{1+t}\\in C^1$: Cauchy–Lipschitz dà unicità, quindi i grafici non si toccano. Il dato $y(0)=1\\in(0,2)$ resta intrappolato fra le barriere $0$ e $2$ per sempre.",
+       cont:"Continua &rarr; la monotonia"
+     },
+     { t:"Stessa equazione, con $0<y<2$ e $t\\ge 0$: la soluzione è:",
+       opts:[
+         {x:"strettamente decrescente: $y(y-2)<0$ e $1+t>0$ danno $y'<0$", c:true},
+         {x:"strettamente crescente"},
+         {x:"costante"},
+         {x:"prima crescente poi decrescente"}
+       ],
+       hint:"Basta il segno del campo: per $0<y<2$ il fattore $y(y-2)$ è negativo e $1+t>0$.",
+       sol:"Il segno di $y'$ è quello di $\\dfrac{y(y-2)}{1+t}$: numeratore $<0$ e denominatore $>0$ per $0<y<2$, quindi $y'<0$ ovunque. Soluzione monotona decrescente, limitata inferiormente da $0$."
+     }
+    ]
+  },
+
+  { pool:"edo", src:"20250721 Es.2",
+    steps:[{
+      t:"Sia $y'=\\ln(1+y^2)\\,(3-y)$, $y(0)=2$. La soluzione è crescente e limitata superiormente da $3$. Quanto vale $\\lim_{t\\to+\\infty}y(t)$?",
+      opts:[
+        {x:"$3$", c:true},
+        {x:"$+\\infty$"},
+        {x:"$2$"},
+        {x:"il limite non esiste"}
+      ],
+      hint:"Monotonia + limitatezza garantiscono che il limite $L$ ESISTE; poi il teorema dell'asintoto forza $L$ ad annullare il campo.",
+      sol:"Crescente e limitata $\\Rightarrow L=\\lim y$ esiste finito. Per il teorema dell'asintoto $\\lim y'=0$, quindi $\\ln(1+L^2)(3-L)=0$. Poiché $y>2$ esclude $L=0$, resta $L=3$."
+    }]
+  },
+
+  { pool:"edo", src:"20240122 · trappola soluzione",
+    steps:[{
+      t:"Il teorema dell'asintoto garantisce l'ESISTENZA del limite $\\lim_{t\\to+\\infty}y(t)$?",
+      opts:[
+        {x:"No: dà solo il VALORE del limite (annulla il campo) SE il limite esiste; l'esistenza va provata a parte", c:true},
+        {x:"Sì, è esattamente ciò che afferma"},
+        {x:"Sì, ma solo per equazioni autonome"},
+        {x:"No, non dà alcuna informazione sui limiti"}
+      ],
+      hint:"Il teorema assume che $\\lim y$ esista e allora deduce $\\lim y'=0$. L'esistenza del limite viene tipicamente da monotonia + limitatezza.",
+      sol:"Il teorema dell'asintoto è condizionale: se $\\lim_{t\\to+\\infty}y=L$ finito ed esiste $\\lim y'$, allora $\\lim y'=0$. Non prova l'esistenza di $L$: usarlo per dedurla è la trappola. L'esistenza viene dalla monotonia."
+    }]
+  },
+
+  { pool:"edo", src:"20250127 Es.3",
+    steps:[{
+      t:"Per garantire che la soluzione di $y'=f(t,y)$ sia definita su TUTTO $\\mathbb{R}$ (globalità), la stima corretta è:",
+      opts:[
+        {x:"sublinearità: $|f(t,u)|\\le L_1(t)\\,|u|+L_2(t)$ con $L_1,L_2$ continue", c:true},
+        {x:"$f$ limitata da una costante su tutto $\\mathbb{R}^2$"},
+        {x:"$f(t,u)\\to 0$ per $u\\to\\infty$"},
+        {x:"$y$ è monotona"}
+      ],
+      hint:"Serve crescita AL PIÙ lineare in $u$ del campo. La limitatezza assoluta è troppo forte (quasi sempre falsa); la monotonia riguarda il comportamento, non il dominio massimale.",
+      sol:"Il teorema di esistenza globale segue dalla sublinearità $|f(t,u)|\\le L_1(t)|u|+L_2(t)$: impedisce l'esplosione in tempo finito. Le stime a priori (soluzione limitata) valgono solo se la soluzione è effettivamente limitata, non quando cresce."
+    }]
+  },
+
+  { pool:"edo", src:"20250627 Es.5",
+    steps:[{
+      t:"Nel problema $y'=\\dfrac{(y^2+1)\\,y}{t}$, $y(0)=1$: cosa osservi sull'ipotesi di Cauchy–Lipschitz nel dato iniziale?",
+      opts:[
+        {x:"$f(t,u)=\\dfrac{(u^2+1)u}{t}$ non è definita né continua in $t=0$: il teorema standard non si applica nel punto iniziale", c:true},
+        {x:"$f$ è $C^1$ ovunque, nessun problema"},
+        {x:"il problema non ammette alcuna soluzione"},
+        {x:"la soluzione è unica per Cauchy–Lipschitz applicato in $(0,1)$"}
+      ],
+      hint:"Guarda il denominatore $t$ proprio nel punto iniziale $t_0=0$.",
+      sol:"Il campo ha $t$ a denominatore: in $t=0$ non è continuo, l'ipotesi di Cauchy–Lipschitz cade nel dato iniziale. Esistenza/unicità vanno studiate ad hoc (separazione delle variabili e comportamento vicino a $t=0$)."
+    }]
+  },
+
+  { pool:"edo", src:"20220124 Es.5",
+    steps:[{
+      t:"Sia $y'=4t^3\\,(1-e^{y})$, $y(0)=\\log 2$. Dove ha un massimo la soluzione?",
+      opts:[
+        {x:"in $t=0$: $y>0$ dà $1-e^{y}<0$, quindi $y'$ ha il segno di $-t^3$ (positivo per $t<0$, negativo per $t>0$)", c:true},
+        {x:"è sempre decrescente, nessun massimo interno"},
+        {x:"in $t=1$"},
+        {x:"non ha massimo: diverge a $+\\infty$"}
+      ],
+      hint:"La costante $y\\equiv 0$ è barriera: $y(0)=\\log 2>0 \\Rightarrow y>0$ sempre $\\Rightarrow 1-e^{y}<0$. Allora il segno di $y'$ è quello di $-t^3$.",
+      sol:"$y\\equiv 0$ annulla il campo (barriera per unicità) e $y(0)=\\log 2>0$ tiene $y>0$, dunque $1-e^{y}<0$. Quindi $y'=4t^3\\cdot(\\text{negativo})$: $y'>0$ per $t<0$, $y'<0$ per $t>0$. Massimo in $t=0$."
+    }]
+  }
+
+];
+
+/* ---------- POOL 2 : SUPERFICI (FULL) ---------- */
+Q.superfici = [
+
+  { pool:"superfici", src:"20240704 Es.3",
+    steps:[
+     { t:"La superficie $\\Sigma=\\{z=4y+5,\\ x^2+y^2\\le z\\}$. Qual è il dominio $D$ dei parametri $(x,y)$?",
+       opts:[
+         {x:"$x^2+(y-2)^2\\le 9$: disco di centro $(0,2)$, raggio $3$", c:true},
+         {x:"$x^2+y^2\\le 9$, centrato nell'origine"},
+         {x:"$x^2+y^2\\le 5$"},
+         {x:"tutto il piano $(x,y)$"}
+       ],
+       hint:"Sostituisci $z=4y+5$ nella condizione $x^2+y^2\\le z$ e completa il quadrato in $y$.",
+       sol:"$x^2+y^2\\le 4y+5 \\iff x^2+(y-2)^2\\le 9$: disco traslato di centro $(0,2)$ e raggio $3$. Ignorare la traslazione falsa tutto il calcolo di area e bordo.",
+       cont:"Continua &rarr; l'elemento d'area"
+     },
+     { t:"Per la stessa $\\Sigma$, grafico di $f(x,y)=4y+5$, l'elemento d'area $\\|\\Phi_x\\times\\Phi_y\\|$ vale:",
+       opts:[
+         {x:"$\\sqrt{1+f_x^2+f_y^2}=\\sqrt{1+0+16}=\\sqrt{17}$", c:true},
+         {x:"$\\sqrt{16}=4$"},
+         {x:"dipende da $(x,y)$"},
+         {x:"$1$"}
+       ],
+       hint:"Per un grafico $\\Phi=(x,y,f)$ vale $\\Phi_x\\times\\Phi_y=(-f_x,-f_y,1)$, di norma $\\sqrt{1+f_x^2+f_y^2}$.",
+       sol:"$f_x=0$, $f_y=4$: $\\|\\Phi_x\\times\\Phi_y\\|=\\sqrt{1+0+16}=\\sqrt{17}$, costante. Area$(\\Sigma)=\\sqrt{17}\\cdot m_2(D)=9\\pi\\sqrt{17}$ (formula dell'area di una superficie cartesiana)."
+     }
+    ]
+  },
+
+  { pool:"superfici", src:"20220124 · trappola normale",
+    steps:[{
+      t:"Per un grafico $z=f(x,y)$ si ha $\\Phi_x\\times\\Phi_y=(-f_x,-f_y,1)$. Se questo grafico è la faccia INFERIORE di un solido $E$, per il flusso USCENTE come va usato?",
+      opts:[
+        {x:"va cambiato segno: $(-f_x,-f_y,1)$ punta in alto (dentro $E$), mentre la normale uscente sotto punta in basso", c:true},
+        {x:"va usato così com'è, punta già all'esterno"},
+        {x:"basta normalizzarlo"},
+        {x:"il flusso non dipende dall'orientazione"}
+      ],
+      hint:"La terza componente di $(-f_x,-f_y,1)$ è $+1$: punta sempre verso l'ALTO. Sulla faccia inferiore di $E$, 'verso l'alto' significa 'entrante'.",
+      sol:"Il flusso è orientato: la normale uscente da $E$ sulla faccia inferiore ha terza componente negativa. Poiché $\\Phi_x\\times\\Phi_y=(-f_x,-f_y,1)$ ha terza componente $+1$ (entrante), va preso col segno opposto. Errore di segno classico nel teorema della divergenza."
+    }]
+  },
+
+  { pool:"superfici", src:"20250127 Es.1 · trappola bordo",
+    steps:[{
+      t:"$\\Sigma$ è il grafico di $z=f(x,y)$ su $D=\\{x^2+y^2\\le R^2\\}$. Il bordo $\\partial\\Sigma$ è:",
+      opts:[
+        {x:"la curva $\\gamma(t)=(R\\cos t,\\,R\\sin t,\\,f(R\\cos t,R\\sin t))$ in $\\mathbb{R}^3$", c:true},
+        {x:"il cerchio $x^2+y^2=R^2$ nel piano $z=0$"},
+        {x:"l'intero disco $D$"},
+        {x:"vuoto: la superficie è chiusa"}
+      ],
+      hint:"$\\partial\\Sigma$ è l'IMMAGINE di $\\partial D$ tramite $\\Phi$: giace su $\\Sigma$, non nel piano $(x,y)$.",
+      sol:"$\\partial\\Sigma=\\Phi(\\partial D)$: applicando $\\Phi(x,y)=(x,y,f(x,y))$ al cerchio $\\partial D$ si ottiene $\\gamma(t)=(R\\cos t,R\\sin t,f(R\\cos t,R\\sin t))$, curva di $\\mathbb{R}^3$ che si proietta sul cerchio ma non vi coincide."
+    }]
+  },
+
+  { pool:"superfici", src:"20240122 Es.4",
+    steps:[{
+      t:"Superficie di rotazione $X(\\theta,z)=(\\gamma(z)\\cos\\theta,\\,\\gamma(z)\\sin\\theta,\\,z)$ con $\\gamma(z)>0$. La terza componente di $X_\\theta\\times X_z$ è:",
+      opts:[
+        {x:"$-\\gamma(z)\\gamma'(z)$: cambia segno col segno di $\\gamma'(z)$", c:true},
+        {x:"sempre $+1$"},
+        {x:"$\\gamma(z)^2$, sempre positiva"},
+        {x:"identicamente nulla"}
+      ],
+      hint:"Calcola $X_\\theta=(-\\gamma\\sin\\theta,\\gamma\\cos\\theta,0)$ e $X_z=(\\gamma'\\cos\\theta,\\gamma'\\sin\\theta,1)$, poi il prodotto vettoriale.",
+      sol:"$X_\\theta\\times X_z=(\\gamma\\cos\\theta,\\ \\gamma\\sin\\theta,\\ -\\gamma\\gamma')$. La terza componente $-\\gamma\\gamma'$ dipende dal segno di $\\gamma'$: la normale non è uniformemente uscente o entrante, va verificata caso per caso (o confrontata col flusso totale)."
+    }]
+  },
+
+  { pool:"superfici", src:"20230907 Es.4",
+    steps:[{
+      t:"Per $\\Sigma:z=2+x^2+(y-1)^2$ su $D=\\{x^2+(y-1)^2\\le 1\\}$, l'area $\\iint_D\\sqrt{1+4x^2+4(y-1)^2}\\,dx\\,dy$ (polari centrate in $(0,1)$) vale:",
+      opts:[
+        {x:"$\\dfrac{\\pi}{6}\\,(5\\sqrt{5}-1)$", c:true},
+        {x:"$\\pi\\sqrt{5}$"},
+        {x:"$\\dfrac{2\\pi}{3}\\,(17\\sqrt{17}-1)$"},
+        {x:"$4\\pi$"}
+      ],
+      hint:"$f_x=2x$, $f_y=2(y-1)$ danno $\\sqrt{1+4\\rho^2}$; calcola $\\int_0^{2\\pi}\\!\\!\\int_0^1\\sqrt{1+4\\rho^2}\\,\\rho\\,d\\rho\\,d\\theta$ con $u=1+4\\rho^2$.",
+      sol:"Con polari centrate in $(0,1)$: $2\\pi\\int_0^1\\sqrt{1+4\\rho^2}\\,\\rho\\,d\\rho=2\\pi\\cdot\\tfrac{1}{12}\\big[(1+4\\rho^2)^{3/2}\\big]_0^1=\\dfrac{\\pi}{6}(5\\sqrt{5}-1)$. Formula dell'area superficiale cartesiana."
+    }]
+  },
+
+  { pool:"superfici", src:"tipo B · manuale",
+    steps:[{
+      t:"Per una porzione di superficie SFERICA $x^2+y^2+z^2=R^2$ in coordinate sferiche, l'elemento d'area è:",
+      opts:[
+        {x:"$\\|X_\\phi\\times X_\\theta\\|=R^2\\sin\\phi$", c:true},
+        {x:"$\\sqrt{1+f_x^2+f_y^2}$ come per i grafici"},
+        {x:"$R$, costante"},
+        {x:"$R^2$, costante"}
+      ],
+      hint:"La formula $\\sqrt{1+f_x^2+f_y^2}$ vale SOLO per grafici cartesiani $z=f(x,y)$. Per la sfera calcola direttamente $\\|X_\\phi\\times X_\\theta\\|$.",
+      sol:"Con $X(\\phi,\\theta)=(R\\sin\\phi\\cos\\theta,R\\sin\\phi\\sin\\theta,R\\cos\\phi)$ si ottiene $\\|X_\\phi\\times X_\\theta\\|=R^2\\sin\\phi$ (jacobiano superficiale sferico). Applicare la formula cartesiana alla sfera è un errore."
+    }]
+  },
+
+  { pool:"superfici", src:"20250214 Es.5",
+    steps:[{
+      t:"Sulla sfera $x^2+y^2+z^2=9$ (con $x=3\\sin\\phi\\cos\\theta$, $y=3\\sin\\phi\\sin\\theta$) il vincolo settoriale $0\\le y\\le x$ impone:",
+      opts:[
+        {x:"$\\theta\\in[0,\\pi/4]$, $\\phi\\in[0,\\pi]$", c:true},
+        {x:"$\\theta\\in[0,\\pi/2]$"},
+        {x:"$\\phi\\in[0,\\pi/4]$"},
+        {x:"$\\theta\\in[0,2\\pi]$"}
+      ],
+      hint:"Per $\\sin\\phi>0$ il vincolo $0\\le y\\le x$ diventa $0\\le\\sin\\theta\\le\\cos\\theta$, cioè $\\tan\\theta\\in[0,1]$.",
+      sol:"$0\\le\\sin\\theta\\le\\cos\\theta$ dà $\\theta\\in[0,\\pi/4]$; $\\phi$ resta libero in $[0,\\pi]$. Il dominio dei parametri è la striscia $[0,\\pi/4]\\times[0,\\pi]$."
+    }]
+  }
+
+];
+
+/* ---------- POOL 3 : CURVE & INTEGRALI DI LINEA (FULL) ---------- */
+Q.curve = [
+
+  { pool:"curve", src:"20220124 Es.4",
+    steps:[
+     { t:"La curva $\\gamma=\\{x^2+y^2=4,\\ z=x+3y+4\\}$. Una parametrizzazione corretta è:",
+       opts:[
+         {x:"$(2\\cos t,\\,2\\sin t,\\,2\\cos t+6\\sin t+4)$, $t\\in[0,2\\pi]$", c:true},
+         {x:"$(\\cos t,\\,\\sin t,\\,\\cos t+3\\sin t+4)$"},
+         {x:"$(2\\cos t,\\,2\\sin t,\\,4)$"},
+         {x:"$(t,\\,t,\\,2t+4)$"}
+       ],
+       hint:"Dal cilindro $x^2+y^2=4$ prendi $x=2\\cos t$, $y=2\\sin t$ (raggio $2$), poi sostituisci nel piano per $z$.",
+       sol:"$x=2\\cos t$, $y=2\\sin t$ soddisfa $x^2+y^2=4$; nel piano $z=x+3y+4=2\\cos t+6\\sin t+4$. Il raggio è $2$, non $1$: usarne $1$ è l'errore tipico.",
+       cont:"Continua &rarr; la regolarità"
+     },
+     { t:"La stessa $\\gamma$ è regolare su $(0,2\\pi)$?",
+       opts:[
+         {x:"Sì: $\\|\\gamma'\\|^2\\ge (x')^2+(y')^2=4>0$", c:true},
+         {x:"No, si annulla in $t=\\pi$"},
+         {x:"No, non è semplice"},
+         {x:"Serve calcolare l'intero $\\|\\gamma'\\|^2$ per concludere"}
+       ],
+       hint:"Basta una minorazione: $\\|\\gamma'\\|^2\\ge (x')^2+(y')^2=4\\sin^2 t+4\\cos^2 t=4$, senza toccare $z'$.",
+       sol:"$\\gamma'=(-2\\sin t,\\,2\\cos t,\\,\\ldots)$; già le prime due componenti danno $\\|\\gamma'\\|^2\\ge 4>0$. Vettore tangente mai nullo $\\Rightarrow$ curva regolare (definizione)."
+     }
+    ]
+  },
+
+  { pool:"curve", src:"tipo curve · manuale",
+    steps:[{
+      t:"Nell'integrale di PRIMA specie $\\int_\\gamma f\\,ds$, l'elemento d'arco è:",
+      opts:[
+        {x:"$ds=\\|\\gamma'(t)\\|\\,dt$", c:true},
+        {x:"$ds=\\gamma'(t)\\,dt$ (vettoriale)"},
+        {x:"$ds=dt$"},
+        {x:"$ds=\\|\\gamma(t)\\|\\,dt$"}
+      ],
+      hint:"$ds$ è uno SCALARE positivo: la NORMA del vettore velocità per $dt$, non il vettore velocità.",
+      sol:"L'ascissa curvilinea è $s(t)=\\int_a^t\\|\\gamma'(\\tau)\\|\\,d\\tau$, quindi $ds=\\|\\gamma'(t)\\|\\,dt$: indipendente dall'orientazione (la norma è positiva)."
+    }]
+  },
+
+  { pool:"curve", src:"tipo curve · lavoro",
+    steps:[{
+      t:"Il lavoro $\\int_\\gamma F\\cdot d\\ell$ (integrale di SECONDA specie) come cambia se inverti il verso di percorrenza di $\\gamma$?",
+      opts:[
+        {x:"cambia SEGNO", c:true},
+        {x:"resta invariato"},
+        {x:"cambia solo se $F$ non è conservativo"},
+        {x:"si annulla"}
+      ],
+      hint:"$d\\ell=\\gamma'(t)\\,dt$ è VETTORIALE: invertire l'orientazione manda $\\gamma'\\to-\\gamma'$.",
+      sol:"L'integrale di seconda specie è ORIENTATO: $\\int_{-\\gamma}F\\cdot d\\ell=-\\int_{\\gamma}F\\cdot d\\ell$, perché il versore tangente cambia verso. (Quello di prima specie, con $ds$, resta invariato.)"
+    }]
+  },
+
+  { pool:"curve", src:"tipo curve · trabocchetto orientazione",
+    steps:[{
+      t:"L'integrale di PRIMA specie $\\int_\\gamma f\\,ds$ dipende dal verso di percorrenza?",
+      opts:[
+        {x:"No: $ds=\\|\\gamma'\\|\\,dt>0$ è indipendente dall'orientazione", c:true},
+        {x:"Sì, cambia segno come il lavoro"},
+        {x:"Sì, solo se $f<0$"},
+        {x:"Dipende dalla parametrizzazione scelta"}
+      ],
+      hint:"Distingui: l'elemento d'arco $ds$ usa la NORMA (sempre positiva); solo l'integrale di SECONDA specie è orientato.",
+      sol:"$ds=\\|\\gamma'\\|\\,dt$ non cambia segno invertendo l'orientazione né riparametrizzando, quindi $\\int_\\gamma f\\,ds$ è invariante (misura massa/lunghezza). Confonderlo col lavoro è la trappola."
+    }]
+  },
+
+  { pool:"curve", src:"20220706 Es.4",
+    steps:[{
+      t:"Per $\\gamma(t)=(\\cos t,\\,\\sin t,\\,4\\cos t+\\sin t+1)$, l'argomento standard di regolarità è:",
+      opts:[
+        {x:"$(x',y')=(-\\sin t,\\cos t)\\ne(0,0)$ perché seno e coseno non si annullano insieme", c:true},
+        {x:"$z'(t)\\ne 0$ per ogni $t$"},
+        {x:"è un cerchio, quindi regolare per definizione"},
+        {x:"$\\|\\gamma(t)\\|$ è costante"}
+      ],
+      hint:"Basta che le prime due componenti di $\\gamma'$ non siano simultaneamente nulle: $\\sin^2 t+\\cos^2 t=1$.",
+      sol:"$\\gamma'=(-\\sin t,\\cos t,-4\\sin t+\\cos t)$; già $(-\\sin t,\\cos t)$ ha norma $1\\ne 0$, quindi $\\gamma'\\ne 0$ e la curva è regolare. $z'$ può annullarsi senza comprometterla."
+    }]
+  },
+
+  { pool:"curve", src:"tipo curve · trabocchetto semplicità",
+    steps:[{
+      t:"La mappa $t\\mapsto(\\cos t,\\sin t)$ è semplice (iniettiva) su quale insieme?",
+      opts:[
+        {x:"$[0,2\\pi)$ ma non su $[0,2\\pi]$ (gli estremi coincidono)", c:true},
+        {x:"tutto $\\mathbb{R}$"},
+        {x:"nessun intervallo"},
+        {x:"solo $[0,\\pi]$"}
+      ],
+      hint:"Per una curva CHIUSA la semplicità si richiede sull'intervallo semiaperto: gli estremi $0$ e $2\\pi$ danno lo stesso punto.",
+      sol:"$(\\cos 0,\\sin 0)=(\\cos 2\\pi,\\sin 2\\pi)$: su $[0,2\\pi]$ la mappa non è iniettiva; su $[0,2\\pi)$ sì. È la definizione corretta di curva chiusa semplice."
+    }]
+  },
+
+  { pool:"curve", src:"20230210 Es.3",
+    steps:[{
+      t:"Se $F=\\nabla U$ è conservativo e $\\gamma$ va da $A$ a $B$, il lavoro $\\int_\\gamma F\\cdot d\\ell$ vale:",
+      opts:[
+        {x:"$U(B)-U(A)$, indipendente dal cammino", c:true},
+        {x:"$U(A)-U(B)$"},
+        {x:"$0$ sempre"},
+        {x:"il flusso del rotore attraverso $\\gamma$"}
+      ],
+      hint:"Teorema fondamentale per campi conservativi: dipende solo dagli estremi, nell'ordine finale meno iniziale.",
+      sol:"$\\int_\\gamma \\nabla U\\cdot d\\ell=U(\\gamma(b))-U(\\gamma(a))=U(B)-U(A)$. Su curva chiusa ($A=B$) dà $0$. L'ordine è finale meno iniziale: invertirlo cambia segno (distrattore)."
+    }]
+  }
+
+];
+
+/* ---------- POOL 4 : VOLUME + FLUSSO / GAUSS (FULL) ---------- */
+Q.gauss = [
+
+  { pool:"gauss", src:"tipo A · manuale",
+    steps:[{
+      t:"Il teorema della divergenza $\\iint_{\\partial E}F\\cdot n\\,d\\sigma=\\iiint_E\\operatorname{div}F\\,dV$ richiede:",
+      opts:[
+        {x:"$F\\in C^1$ su un aperto contenente $\\overline{E}$; $E$ regolare con normale $n$ USCENTE", c:true},
+        {x:"solo $F$ continuo"},
+        {x:"$E$ illimitato"},
+        {x:"$\\operatorname{div}F=0$"}
+      ],
+      hint:"Servono la regolarità $C^1$ del campo e l'orientazione USCENTE della frontiera.",
+      sol:"Gauss vale per $F\\in C^1$ su un intorno del compatto $\\overline{E}$, con $E$ dominio regolare e normale uscente. In presenza di singolarità interne al campo va isolata la singolarità."
+    }]
+  },
+
+  { pool:"gauss", src:"20220706 Es.2",
+    steps:[{
+      t:"Se $\\operatorname{div}F=8$ (costante), il flusso uscente da $E$ vale:",
+      opts:[
+        {x:"$8\\,\\mathrm{Vol}(E)$", c:true},
+        {x:"$8$"},
+        {x:"$0$"},
+        {x:"dipende dalla forma di $\\partial E$"}
+      ],
+      hint:"Gauss: $\\iiint_E 8\\,dV=8\\iiint_E dV$.",
+      sol:"Per il teorema della divergenza $\\Phi=\\iiint_E\\operatorname{div}F\\,dV=8\\,\\mathrm{Vol}(E)$. Con divergenza costante il flusso è la costante per il volume: conviene sempre calcolare $\\operatorname{div}F$ per primo."
+    }]
+  },
+
+  { pool:"gauss", src:"tipo H · superficie aperta",
+    steps:[{
+      t:"Per il flusso di $F$ attraverso una superficie APERTA $\\Sigma$ usando Gauss, la strategia corretta è:",
+      opts:[
+        {x:"'tappare' $\\Sigma$ con $\\Sigma_0$ per chiudere un solido $E$, applicare Gauss a $\\partial E=\\Sigma\\cup\\Sigma_0$, poi sottrarre $\\Phi_{\\Sigma_0}$", c:true},
+        {x:"applicare Gauss direttamente a $\\Sigma$"},
+        {x:"il flusso è sempre $0$ per superfici aperte"},
+        {x:"usare il teorema di Stokes"}
+      ],
+      hint:"Gauss vale solo per superfici CHIUSE (frontiere di solidi). Chiudi $\\Sigma$ con un tappo semplice, applica il teorema, poi sottrai il flusso del tappo.",
+      sol:"$\\Phi_\\Sigma=\\iiint_E\\operatorname{div}F\\,dV-\\Phi_{\\Sigma_0}$, con $\\Sigma_0$ tappo piano/semplice ed $E$ il solido racchiuso. Dimenticare di tappare (applicare Gauss a superficie aperta) è l'errore segnalato."
+    }]
+  },
+
+  { pool:"gauss", src:"20250627 Es.3",
+    steps:[{
+      t:"Il dominio $\\{0\\le z\\le 4,\\ (x-z)^2+y^2\\le 4\\}$ si integra meglio:",
+      opts:[
+        {x:"per strati: a $z$ fisso è un disco di centro $(z,0)$ e raggio $2$, con traslazione $u=x-z$", c:true},
+        {x:"in cilindriche standard centrate nell'origine"},
+        {x:"in coordinate sferiche"},
+        {x:"non è integrabile in forma chiusa"}
+      ],
+      hint:"L'asse del cilindro è inclinato: per ogni $z$ il disco è centrato in $(z,0)$, NON nell'origine. Serve una traslazione dipendente da $z$.",
+      sol:"Sezionando per $z$: $E_z=\\{(x-z)^2+y^2\\le 4\\}$, disco di centro $(z,0)$. Con $u=x-z$ (jacobiano $1$) diventa standard. Le cilindriche centrate nell'origine falliscono."
+    }]
+  },
+
+  { pool:"gauss", src:"20230210 Es.4",
+    steps:[{
+      t:"Un solido ha frontiera $\\Sigma_1\\cup\\Sigma_2\\cup\\Sigma_3$. Per trovare $\\Phi_{\\Sigma_3}$ quando $\\Sigma_3$ è complicata:",
+      opts:[
+        {x:"$\\Phi_{\\Sigma_3}=\\iiint_E\\operatorname{div}F\\,dV-\\Phi_{\\Sigma_1}-\\Phi_{\\Sigma_2}$", c:true},
+        {x:"$\\Phi_{\\Sigma_3}=\\Phi_{\\Sigma_1}+\\Phi_{\\Sigma_2}$"},
+        {x:"$\\Phi_{\\Sigma_3}=0$"},
+        {x:"impossibile senza parametrizzare $\\Sigma_3$"}
+      ],
+      hint:"Gauss dà il flusso TOTALE $\\iiint_E\\operatorname{div}F$, che è la somma dei tre. Isola quello incognito.",
+      sol:"Per Gauss $\\Phi_{\\Sigma_1}+\\Phi_{\\Sigma_2}+\\Phi_{\\Sigma_3}=\\iiint_E\\operatorname{div}F\\,dV$. Calcolati i flussi sulle superfici semplici, $\\Phi_{\\Sigma_3}$ segue per differenza, evitando la parametrizzazione difficile."
+    }]
+  }
+
+];
+
+/* ---------- POOL 5 : STOKES / CIRCUITAZIONE (FULL) ---------- */
+Q.stokes = [
+
+  { pool:"stokes", src:"tipo B · manuale",
+    steps:[{
+      t:"Il teorema di Stokes afferma che $\\displaystyle\\int_{\\partial\\Sigma}F\\cdot d\\ell$ è uguale a:",
+      opts:[
+        {x:"$\\displaystyle\\iint_\\Sigma(\\operatorname{rot}F)\\cdot n\\,d\\sigma$", c:true},
+        {x:"$\\displaystyle\\iint_\\Sigma(\\operatorname{div}F)\\,d\\sigma$"},
+        {x:"$\\displaystyle\\iiint_E(\\operatorname{rot}F)\\,dV$"},
+        {x:"$\\displaystyle\\iint_\\Sigma F\\cdot n\\,d\\sigma$"}
+      ],
+      hint:"La CIRCUITAZIONE del campo sul bordo eguaglia il FLUSSO DEL ROTORE attraverso la superficie.",
+      sol:"Stokes: $\\int_{\\partial\\Sigma}F\\cdot d\\ell=\\iint_\\Sigma(\\operatorname{rot}F)\\cdot n\\,d\\sigma$, con $F\\in C^1$, $\\Sigma$ orientabile e bordo orientato coerentemente. Non scambiare rotore con divergenza."
+    }]
+  },
+
+  { pool:"stokes", src:"tipo B · calcolo rotore",
+    steps:[{
+      t:"La TERZA componente di $\\operatorname{rot}F$ è:",
+      opts:[
+        {x:"$\\partial_x F_2-\\partial_y F_1$", c:true},
+        {x:"$\\partial_y F_1-\\partial_x F_2$"},
+        {x:"$\\partial_x F_1+\\partial_y F_2$"},
+        {x:"$\\partial_y F_3-\\partial_z F_2$"}
+      ],
+      hint:"$\\operatorname{rot}F=(\\partial_yF_3-\\partial_zF_2,\\ \\partial_zF_1-\\partial_xF_3,\\ \\partial_xF_2-\\partial_yF_1)$: la terza è $\\partial_xF_2-\\partial_yF_1$.",
+      sol:"Dal determinante formale $\\operatorname{rot}F=\\nabla\\times F$, la terza componente è $\\partial_xF_2-\\partial_yF_1$. Invertire l'ordine della differenza è l'errore di segno più frequente."
+    }]
+  },
+
+  { pool:"stokes", src:"20250127 Es.1 · trappola orientazione",
+    steps:[{
+      t:"Se la normale $n$ di $\\Sigma$ ha TERZA componente NEGATIVA, il bordo $\\partial\\Sigma$ va percorso:",
+      opts:[
+        {x:"in senso ORARIO visto dall'alto (regola della mano destra)", c:true},
+        {x:"in senso antiorario visto dall'alto"},
+        {x:"il verso è irrilevante"},
+        {x:"due volte, in entrambi i versi"}
+      ],
+      hint:"Regola della mano destra: pollice lungo $n$ (qui verso il basso), le dita indicano il verso del bordo, che risulta orario visto dall'alto.",
+      sol:"L'orientazione bordo/normale dev'essere coerente (mano destra). Con $n$ a terza componente negativa il bordo è orario dall'alto; percorrerlo antiorario impone di cambiare segno all'integrale. Trappola del 27/01/2025."
+    }]
+  },
+
+  { pool:"stokes", src:"tipo B · scelta superficie",
+    steps:[{
+      t:"Il bordo $\\gamma$ è un cerchio giacente su un piano inclinato. Per applicare Stokes conviene scegliere come $\\Sigma$:",
+      opts:[
+        {x:"la porzione di PIANO delimitata da $\\gamma$ (la più semplice)", c:true},
+        {x:"una semisfera qualsiasi con quel bordo"},
+        {x:"non si può scegliere: $\\Sigma$ è fissata dal testo"},
+        {x:"il disco proiettato sul piano $xy$"}
+      ],
+      hint:"Stokes vale per QUALSIASI superficie regolare con quel bordo. Sfrutta la libertà: scegli il pezzo di piano.",
+      sol:"Il bordo determina il valore dell'integrale, non la superficie: si prende la più semplice con $\\partial\\Sigma=\\gamma$. Il pezzo di piano dà normale costante e conti minimi. (Il disco proiettato ha bordo diverso.)"
+    }]
+  },
+
+  { pool:"stokes", src:"20220706 Es.4",
+    steps:[{
+      t:"Per $F=(y^2+y+z^2,\\ 2xy+x,\\ 2axz)$ si ha $\\operatorname{rot}F=(0,\\ 2z-2az,\\ 0)$. Per quale $a$ la circuitazione su OGNI curva chiusa è nulla?",
+      opts:[
+        {x:"$a=1$: allora $\\operatorname{rot}F=0$ e $F$ è conservativo su $\\mathbb{R}^3$", c:true},
+        {x:"$a=0$"},
+        {x:"ogni $a$"},
+        {x:"nessun $a$"}
+      ],
+      hint:"Circuitazione nulla su ogni curva chiusa $\\iff$ rotore nullo su un dominio semplicemente connesso. Imponi $\\operatorname{rot}F=0$.",
+      sol:"$\\operatorname{rot}F=(0,2z(1-a),0)=0$ ovunque sse $a=1$. Su $\\mathbb{R}^3$ (semplicemente connesso) rotore nullo $\\Rightarrow F$ conservativo (Stokes), quindi circuitazione nulla su ogni chiusa. Potenziale $U=xy^2+xy+xz^2$."
+    }]
+  }
+
+];
+
+/* ---------- POOL 6 : OTTIMIZZAZIONE (liberi & Lagrange) (FULL) ---------- */
+Q.ottim = [
+
+  { pool:"ottim", src:"20250116 Es.2 · Weierstrass",
+    steps:[{
+      t:"Per cercare max e min ASSOLUTI di $f$ continua su $D=\\{3x^2+4y^2\\le 9\\}$, cosa garantisce la loro ESISTENZA prima di calcolarli?",
+      opts:[
+        {x:"Il teorema di Weierstrass: $D$ è chiuso e limitato (compatto) e $f$ è continua, quindi max e min esistono", c:true},
+        {x:"Il teorema di Fermat, perché il gradiente si annulla in un punto interno"},
+        {x:"Nulla: l'esistenza va verificata caso per caso risolvendo il sistema $\\nabla f=0$"},
+        {x:"Il teorema di Lagrange, perché il dominio ha un bordo"}
+      ],
+      hint:"L'esistenza di max/min assoluti dipende da due proprietà topologiche del dominio più la continuità di $f$, non dal calcolo dei punti critici.",
+      sol:"Teorema di Weierstrass: $f$ continua su un compatto (chiuso e limitato) ammette massimo e minimo assoluti. Verificare la compattezza di $D$ è il primo passo, prima di cercare candidati interni e di bordo."
+    }]
+  },
+
+  { pool:"ottim", src:"20250127 Es.2",
+    steps:[
+     { t:"Sia $f(x,y)=x^2-2xy+y^3+1$. Nel punto critico $(0,0)$ l'Hessiana ha $\\det H=-4<0$. Che punto è?",
+       opts:[
+         {x:"Sella: $\\det H<0$ classifica come sella, indipendentemente dal segno di $f_{xx}$", c:true},
+         {x:"Minimo, perché $f_{xx}=2>0$"},
+         {x:"Massimo"},
+         {x:"Non classificabile col test dell'Hessiana"}
+       ],
+       hint:"Con $\\det H<0$ gli autovalori hanno segni opposti: il segno di $f_{xx}$ è irrilevante.",
+       sol:"Test dell'Hessiana in 2D: $\\det H<0\\Rightarrow$ sella. Il controllo di $f_{xx}$ serve solo a distinguere min da max quando $\\det H>0$.",
+       cont:"Continua &rarr; l'altro punto critico"
+     },
+     { t:"Stessa $f$, nel punto critico $(2/3,2/3)$ si ha $\\det H=4>0$ e $f_{xx}=2>0$. Che punto è?",
+       opts:[
+         {x:"Minimo locale: $\\det H>0$ e $f_{xx}>0$", c:true},
+         {x:"Massimo locale"},
+         {x:"Sella"},
+         {x:"Serve calcolare esplicitamente gli autovalori"}
+       ],
+       hint:"Con $\\det H>0$ gli autovalori sono concordi; il segno di $f_{xx}$ dice quale.",
+       sol:"$\\det H>0$ e $f_{xx}>0\\Rightarrow$ minimo locale ($f_{xx}<0\\Rightarrow$ massimo). Test dell'Hessiana in 2D."
+     }
+    ]
+  },
+
+  { pool:"ottim", src:"20230504 Es.5 · Lagrange",
+    steps:[{
+      t:"Sul vincolo $g(x,y)=c$, la condizione dei moltiplicatori $\\nabla f=\\lambda\\nabla g$ è equivalente a:",
+      opts:[
+        {x:"$f_x g_y-f_y g_x=0$: i gradienti sono PARALLELI (minore $2\\times 2$ nullo)", c:true},
+        {x:"$\\nabla f\\cdot\\nabla g=0$: i gradienti sono ortogonali"},
+        {x:"$\\nabla f=0$ sul bordo"},
+        {x:"$g_x=g_y=0$"}
+      ],
+      hint:"I moltiplicatori impongono $\\nabla f$ e $\\nabla g$ PARALLELI, non ortogonali: annulla il determinante $2\\times 2$, non il prodotto scalare.",
+      sol:"$\\nabla f=\\lambda\\nabla g$ significa gradienti paralleli $\\iff$ il minore $2\\times 2$ $f_xg_y-f_yg_x=0$. Con $g=c$ dà il sistema per i candidati di bordo (teorema di Lagrange)."
+    }]
+  },
+
+  { pool:"ottim", src:"20230621 · punto critico fuori dominio",
+    steps:[{
+      t:"Il sistema $\\nabla f=0$ dà il candidato $P=(3,0)$, ma il dominio è $D=\\{2x^2+y^2\\le 1\\}$. $P$ va inserito fra i candidati?",
+      opts:[
+        {x:"No: $2\\cdot 3^2=18>1$, quindi $P\\notin D$; un punto critico interno conta solo se appartiene al dominio", c:true},
+        {x:"Sì, i punti critici vanno sempre confrontati"},
+        {x:"Sì, ma solo il valore $f(P)$, non la posizione"},
+        {x:"Solo se $P$ giace sul bordo $\\partial D$"}
+      ],
+      hint:"Un punto critico interno conta solo se cade DENTRO il dominio ammissibile: verifica sempre l'appartenenza.",
+      sol:"$P=(3,0)$ non soddisfa $2x^2+y^2\\le 1$ (dà $18>1$): è fuori da $D$, quindi si scarta. Confrontare $f(P)$ sarebbe un errore. Src 20230621."
+    }]
+  },
+
+  { pool:"ottim", src:"tipo D · manuale",
+    steps:[{
+      t:"In un punto critico hai $\\det H>0$. Puoi concludere che è un minimo?",
+      opts:[
+        {x:"No: $\\det H>0$ dice solo che è un estremo (autovalori concordi); serve il segno di $f_{xx}$ per distinguere min da max", c:true},
+        {x:"Sì, $\\det H>0$ è sempre un minimo"},
+        {x:"Sì, se anche $f_{yy}>0$ è certamente un minimo, altrimenti una sella"},
+        {x:"No, con $\\det H>0$ è sempre una sella"}
+      ],
+      hint:"$\\det H>0$ garantisce un estremo, ma non quale: due autovalori negativi danno un massimo con lo stesso $\\det>0$.",
+      sol:"$\\det H>0\\Rightarrow$ autovalori dello stesso segno: minimo se $f_{xx}>0$, massimo se $f_{xx}<0$. Omettere il controllo di $f_{xx}$ è la trappola classica del test dell'Hessiana."
+    }]
+  },
+
+  { pool:"ottim", src:"20250721 Es.1",
+    steps:[{
+      t:"Per $F(x,y,z)=x^2 e^{yz}$: dal sistema $\\nabla F=0$ risulta che TUTTI i punti $(0,y,z)$ sono critici. Qual è il minimo assoluto su $\\mathbb{R}^3$?",
+      opts:[
+        {x:"$0$: $F\\ge 0$ ovunque e $F=0$ su tutto il piano $x=0$, un continuo di punti di minimo", c:true},
+        {x:"Non esiste minimo perché i punti critici sono infiniti"},
+        {x:"$-\\infty$"},
+        {x:"$1$"}
+      ],
+      hint:"Guarda il segno: $F$ è un quadrato per un esponenziale, quindi $F\\ge 0$. Il minimo è il valore più basso raggiunto, anche se su infiniti punti.",
+      sol:"$F=x^2 e^{yz}\\ge 0$ e $F=0\\iff x=0$: l'insieme dei minimi è il piano $x=0$, il minimo assoluto è $0$. Avere infiniti punti critici non impedisce l'esistenza del minimo. Src 20250721 es.1."
+    }]
+  }
+
+];
+
+/* ---------- POOL 7 : SERIE E SUCCESSIONI DI FUNZIONI (FULL) ---------- */
+Q.serie = [
+
+  { pool:"serie", src:"20250127 Es.4",
+    steps:[
+     { t:"Sia $f_n(x)=\\cos\\!\\big(\\tfrac{x}{n}\\big)\\dfrac{nx+3}{n^2+2x^2}$. Qual è il limite PUNTUALE su $\\mathbb{R}$?",
+       opts:[
+         {x:"$f(x)=0$ per ogni $x$: a $x$ fisso il numeratore cresce come $n$, il denominatore come $n^2$", c:true},
+         {x:"$f(x)=x$"},
+         {x:"$f(x)=\\cos x$"},
+         {x:"il limite puntuale non esiste"}
+       ],
+       hint:"Fissa $x$ e manda $n\\to\\infty$: $\\cos(x/n)\\to 1$ e la frazione $\\sim\\frac{nx}{n^2}\\to 0$.",
+       sol:"A $x$ fissato $\\cos(x/n)\\to 1$ e $\\frac{nx+3}{n^2+2x^2}\\to 0$, quindi $f_n(x)\\to 0$. La convergenza puntuale si studia sempre a $x$ FISSO.",
+       cont:"Continua &rarr; l'uniformità"
+     },
+     { t:"La convergenza $f_n\\to 0$ è UNIFORME su tutto $\\mathbb{R}$?",
+       opts:[
+         {x:"No: in $x=n$ vale $f_n(n)=\\cos(1)\\dfrac{n^2+3}{3n^2}\\to\\dfrac{\\cos 1}{3}\\ne 0$, quindi $\\sup_{\\mathbb{R}}|f_n|\\not\\to 0$", c:true},
+         {x:"Sì: converge a $0$ per ogni $x$, quindi anche uniformemente"},
+         {x:"Sì, perché $|f_n|\\le 1$"},
+         {x:"Non si può stabilire senza calcolare la derivata di $f_n$"}
+       ],
+       hint:"Per NEGARE l'uniformità basta una successione $x_n$ (qui $x_n=n$) lungo cui $f_n(x_n)$ non tende a $0$.",
+       sol:"$\\sup_{\\mathbb{R}}|f_n-f|\\ge|f_n(n)|\\to\\frac{\\cos 1}{3}\\ne 0$: convergenza NON uniforme su $\\mathbb{R}$. Puntuale ovunque $\\ne$ uniforme. Su $[0,2]$ invece $|f_n|\\le\\frac{2n+3}{n^2}\\to 0$: uniforme. Src 20250127 es.4."
+     }
+    ]
+  },
+
+  { pool:"serie", src:"tipo · manuale · Weierstrass-M",
+    steps:[{
+      t:"Il criterio di Weierstrass (M-test) per $\\sum_k f_k(x)$ su $I$: se $\\sum_k\\sup_I|f_k|<+\\infty$ allora la serie converge:",
+      opts:[
+        {x:"totalmente su $I$, e quindi anche uniformemente e assolutamente", c:true},
+        {x:"solo puntualmente"},
+        {x:"uniformemente, ma la convergenza totale è più debole di quella uniforme"},
+        {x:"e la condizione è anche NECESSARIA per l'uniformità"}
+      ],
+      hint:"La convergenza totale (M-test) IMPLICA l'uniforme, ma non viceversa: esistono serie uniformemente convergenti senza convergenza totale.",
+      sol:"Weierstrass-M: $\\sum\\sup_I|f_k|=\\sum M_k<\\infty\\Rightarrow$ convergenza totale $\\Rightarrow$ uniforme e assoluta. L'implicazione non si inverte: l'uniforme non richiede la totale."
+    }]
+  },
+
+  { pool:"serie", src:"20240122 Es.2",
+    steps:[
+     { t:"Per $\\sum_{k\\ge 1}\\dfrac{(\\log x)^k}{3^k\\,k}$ poni $y=\\dfrac{\\log x}{3}$. Qual è il raggio di convergenza in $y$?",
+       opts:[
+         {x:"$R=1$: la serie diventa $\\sum y^k/k$, con $\\sqrt[k]{1/k}\\to 1$", c:true},
+         {x:"$R=3$"},
+         {x:"$R=+\\infty$"},
+         {x:"$R=0$"}
+       ],
+       hint:"Riconosci $\\sum y^k/k$: il raggio si ottiene dal criterio della radice/rapporto sui coefficienti $1/k$.",
+       sol:"$\\sum_k\\frac{y^k}{k}$ ha $R=1$ (criterio della radice: $\\sqrt[k]{1/k}\\to 1$). Dentro $|y|<1$ converge; gli estremi $y=\\pm 1$ vanno studiati a parte. Src 20240122 es.2.",
+       cont:"Continua &rarr; gli estremi"
+     },
+     { t:"Agli estremi: in $y=1$ la serie è $\\sum 1/k$, in $y=-1$ è $\\sum(-1)^k/k$. L'insieme di convergenza in $y$ è:",
+       opts:[
+         {x:"$[-1,1)$: in $y=1$ diverge (armonica), in $y=-1$ converge (Leibniz)", c:true},
+         {x:"$(-1,1)$: entrambi gli estremi si escludono sempre"},
+         {x:"$[-1,1]$: converge a entrambi gli estremi"},
+         {x:"$(-1,1]$"}
+       ],
+       hint:"Il raggio non decide gli estremi: $\\sum 1/k$ diverge, $\\sum(-1)^k/k$ converge per Leibniz. Studiali separatamente.",
+       sol:"$y=1$: serie armonica, diverge. $y=-1$: armonica a segni alterni, converge per Leibniz. Convergenza $y\\in[-1,1)$, cioè $\\log x\\in[-3,3)$, $x\\in[e^{-3},e^3)$. Src 20240122 es.2."
+     }
+    ]
+  },
+
+  { pool:"serie", src:"20240704 Es.4 · scambio limite-integrale",
+    steps:[{
+      t:"Per scambiare $\\lim_n\\int_a^b f_n=\\int_a^b\\lim_n f_n$ su un intervallo COMPATTO $[a,b]$, l'ipotesi sufficiente più usata è:",
+      opts:[
+        {x:"la convergenza uniforme di $f_n$ su $[a,b]$ (oppure la convergenza dominata)", c:true},
+        {x:"la sola convergenza puntuale di $f_n$"},
+        {x:"la convergenza uniforme su tutto $\\mathbb{R}$"},
+        {x:"che ogni $f_n$ sia limitata"}
+      ],
+      hint:"La convergenza puntuale da sola NON basta per lo scambio; serve l'uniforme sul compatto (o una dominante sommabile).",
+      sol:"Su $[a,b]$ compatto la convergenza uniforme permette $\\lim\\int=\\int\\lim$. Anche senza uniforme su $\\mathbb{R}$ spesso vale su $[a,b]$; in alternativa la convergenza dominata (Lebesgue). Src 20240704 es.4."
+    }]
+  },
+
+  { pool:"serie", src:"20240619 Es.4 · derivazione termine a termine",
+    steps:[{
+      t:"Per derivare termine a termine $S(x)=\\sum_n u_n(x)$ ottenendo $S'(x)=\\sum_n u_n'(x)$, cosa serve?",
+      opts:[
+        {x:"che $\\sum u_n$ converga in un punto e che la serie delle DERIVATE $\\sum u_n'$ converga uniformemente", c:true},
+        {x:"solo che $\\sum u_n$ converga puntualmente"},
+        {x:"che $\\sum u_n$ converga uniformemente (basta quella)"},
+        {x:"che ogni $u_n$ sia derivabile, senza altre ipotesi"}
+      ],
+      hint:"Il teorema di derivazione per serie chiede l'uniformità sulla serie delle DERIVATE, non solo su quella di partenza.",
+      sol:"Teorema: se $\\sum u_n(x_0)$ converge e $\\sum u_n'$ converge uniformemente in un intorno, allora $S$ è derivabile e $S'=\\sum u_n'$. L'uniformità di $\\sum u_n$ da sola non basta. Src 20240619 es.4."
+    }]
+  },
+
+  { pool:"serie", src:"20250214 Es.4 · Leibniz",
+    steps:[{
+      t:"Per applicare il criterio di Leibniz a $\\sum(-1)^k a_k$ occorre verificare che:",
+      opts:[
+        {x:"$a_k\\ge 0$, $\\{a_k\\}$ decrescente e $a_k\\to 0$: tutte e tre le condizioni", c:true},
+        {x:"solo $a_k\\to 0$"},
+        {x:"$a_k\\to 0$ e $\\sum a_k$ converge"},
+        {x:"$\\{a_k\\}$ decrescente, senza richiedere $a_k\\to 0$"}
+      ],
+      hint:"Leibniz richiede TRE condizioni: positività, monotonia decrescente e infinitesimo. La sola $a_k\\to 0$ non basta.",
+      sol:"Criterio di Leibniz: $a_k\\ge 0$, decrescente e $a_k\\to 0$ garantiscono la convergenza di $\\sum(-1)^k a_k$. Manca la monotonia $\\Rightarrow$ il criterio non si applica."
+    }]
+  }
+
+];
+
+/* ---------- POOL 8 : CAMPI CONSERVATIVI / POTENZIALE (FULL) ---------- */
+Q.conserv = [
+
+  { pool:"conserv", src:"20230907 Es.2 · il buco",
+    steps:[{
+      t:"Il campo $F=\\dfrac{1}{x^2+y^2}(-y,\\,x)$ su $\\Omega=\\mathbb{R}^2\\setminus\\{(0,0)\\}$ ha $\\partial_xF_2-\\partial_yF_1=0$ (irrotazionale). È conservativo?",
+      opts:[
+        {x:"No: $\\Omega$ non è semplicemente connesso (buco nell'origine); la circuitazione sul cerchio unitario vale $2\\pi\\ne 0$", c:true},
+        {x:"Sì: irrotazionale implica conservativo"},
+        {x:"Sì, perché $F$ è $C^1$ su $\\Omega$"},
+        {x:"Non si può stabilire senza costruire il potenziale"}
+      ],
+      hint:"Irrotazionale $\\Rightarrow$ conservativo SOLO su domini semplicemente connessi. Con un buco, calcola la circuitazione attorno al buco.",
+      sol:"$\\operatorname{rot}F=0$ ma $\\Omega$ ha un buco: il teorema (irrotazionale + semplicemente connesso $\\Rightarrow$ conservativo) non si applica. $\\oint_{x^2+y^2=1}F\\cdot d\\ell=2\\pi\\ne 0$ prova la non conservatività. Src 20230907 es.2."
+    }]
+  },
+
+  { pool:"conserv", src:"20240122 Es.3 · costruzione potenziale",
+    steps:[{
+      t:"Dato un campo conservativo $F=(F_1,F_2)$ su $\\mathbb{R}^2$, la costruzione corretta del potenziale $U$ è:",
+      opts:[
+        {x:"integrare $U_x=F_1$ in $x$ (compare una funzione $c(y)$), poi imporre $U_y=F_2$ per determinare $c'(y)$", c:true},
+        {x:"porre $U=F_1+F_2$"},
+        {x:"integrare $U_x=F_1$ in $x$ e aggiungere una costante numerica $k$"},
+        {x:"calcolare $U=\\big(\\int F_1\\,dx\\big)\\cdot\\big(\\int F_2\\,dy\\big)$"}
+      ],
+      hint:"La 'costante' d'integrazione rispetto a $x$ è una funzione arbitraria $c(y)$, da fissare imponendo la seconda equazione.",
+      sol:"Da $U_x=F_1$: $U=\\int F_1\\,dx+c(y)$. Derivando in $y$ e imponendo $U_y=F_2$ si ricava $c'(y)$, quindi $c(y)$. Mettere una costante numerica al posto di $c(y)$ è l'errore. Src 20240122 es.3."
+    }]
+  },
+
+  { pool:"conserv", src:"tipo E · manuale · chiusa vs esatta",
+    steps:[{
+      t:"Per una $1$-forma $\\omega=P\\,dx+Q\\,dy$, la condizione $\\partial_yP=\\partial_xQ$ (forma CHIUSA) implica che $\\omega$ è ESATTA:",
+      opts:[
+        {x:"solo se il dominio è semplicemente connesso; in generale chiusa non implica esatta", c:true},
+        {x:"sempre: chiusa ed esatta coincidono"},
+        {x:"mai: sono proprietà indipendenti"},
+        {x:"solo se $P$ e $Q$ sono polinomi"}
+      ],
+      hint:"Chiusa $\\ne$ esatta in generale: l'implicazione richiede un'ipotesi TOPOLOGICA sul dominio (lemma di Poincaré).",
+      sol:"$\\partial_yP=\\partial_xQ$ è la chiusura (necessaria per l'esattezza). Il lemma di Poincaré dà 'chiusa $\\Rightarrow$ esatta' solo su domini semplicemente connessi. Controesempio: $\\frac{-y\\,dx+x\\,dy}{x^2+y^2}$ su $\\mathbb{R}^2\\setminus\\{0\\}$."
+    }]
+  },
+
+  { pool:"conserv", src:"20230705 Es.3 · parametro",
+    steps:[{
+      t:"Per quale $a$ il campo $F=\\Big(\\dfrac{2xy}{(1+x^2)^2},\\ \\dfrac{a}{1+x^2}\\Big)$ è conservativo su $\\mathbb{R}^2$?",
+      opts:[
+        {x:"$a=-1$: si impone $\\partial_yF_1=\\partial_xF_2$, cioè $\\dfrac{2x}{(1+x^2)^2}=\\dfrac{-2ax}{(1+x^2)^2}$", c:true},
+        {x:"$a=1$"},
+        {x:"$a=0$"},
+        {x:"ogni valore di $a$"}
+      ],
+      hint:"$\\mathbb{R}^2$ è semplicemente connesso: basta imporre $\\partial_yF_1=\\partial_xF_2$ e risolvere in $a$.",
+      sol:"$\\partial_yF_1=\\frac{2x}{(1+x^2)^2}$, $\\partial_xF_2=\\frac{-2ax}{(1+x^2)^2}$: uguaglianza $\\iff -a=1\\iff a=-1$. Su $\\mathbb{R}^2$ ciò basta per la conservatività; potenziale $U=-\\frac{y}{1+x^2}$. Src 20230705 es.3."
+    }]
+  },
+
+  { pool:"conserv", src:"20240619 Es.3 · rot vs div",
+    steps:[{
+      t:"Quale condizione caratterizza un campo CONSERVATIVO su un dominio semplicemente connesso?",
+      opts:[
+        {x:"$\\operatorname{rot}F=0$ (irrotazionalità)", c:true},
+        {x:"$\\operatorname{div}F=0$ (solenoidalità)"},
+        {x:"$\\nabla F=0$ (campo costante)"},
+        {x:"$\\|F\\|$ costante"}
+      ],
+      hint:"Non confondere: $\\operatorname{rot}F=0$ riguarda la conservatività (potenziale scalare); $\\operatorname{div}F=0$ riguarda la conservazione del flusso (solenoidalità).",
+      sol:"Conservativo $\\iff$ esiste $U$ con $F=\\nabla U$; su dominio semplicemente connesso equivale a $\\operatorname{rot}F=0$. $\\operatorname{div}F=0$ è tutt'altra proprietà (campo solenoidale, potenziale vettore). Src 20240619 es.3."
+    }]
+  }
+
+];
+
+/* ---------- POOL 9 : DIFFERENZIABILITA' CON PARAMETRO (FULL) ---------- */
+Q.diff = [
+
+  { pool:"diff", src:"20250214 Es.2 · derivate dalla definizione",
+    steps:[{
+      t:"Sia $f(x,y)=\\dfrac{\\sin(x^3y^2)+x^3+2y^3}{x^2+y^2}$ per $(x,y)\\ne(0,0)$, $f(0,0)=0$. Come si calcola $f_x(0,0)$?",
+      opts:[
+        {x:"dalla definizione: $f_x(0,0)=\\lim_{h\\to 0}\\dfrac{f(h,0)}{h}=\\lim_{h\\to 0}\\dfrac{h^3/h^2}{h}=1$", c:true},
+        {x:"derivando la formula con la regola del quoziente e valutando in $(0,0)$"},
+        {x:"$f_x(0,0)=0$ perché $f(0,0)=0$"},
+        {x:"$f_x(0,0)$ non esiste"}
+      ],
+      hint:"Nell'origine la funzione è definita a tratti: le parziali si calcolano SOLO dal rapporto incrementale, mai derivando la formula esplicita.",
+      sol:"$f(h,0)=\\frac{h^3}{h^2}=h$, quindi $\\frac{f(h,0)}{h}=1\\to 1$: $f_x(0,0)=1$ (analogamente $f_y(0,0)=2$). La regola del quoziente non vale in $(0,0)$, dove la formula esplicita non è quella usata. Src 20250214 es.2."
+    }]
+  },
+
+  { pool:"diff", src:"20230123 Es.1 · gerarchia",
+    steps:[{
+      t:"Nell'origine una funzione può essere continua e avere entrambe le derivate parziali, ma NON essere differenziabile?",
+      opts:[
+        {x:"Sì: la derivabilità (esistenza delle parziali) non implica la differenziabilità", c:true},
+        {x:"No: se le parziali esistono, $f$ è differenziabile"},
+        {x:"No: se $f$ è continua e derivabile è automaticamente differenziabile"},
+        {x:"Sì, ma solo se $f$ non è continua"}
+      ],
+      hint:"La gerarchia corretta è: $C^1\\Rightarrow$ differenziabile $\\Rightarrow$ continua e derivabile. Le frecce non si invertono.",
+      sol:"Derivabile $\\not\\Rightarrow$ differenziabile. La differenziabilità richiede che il resto $\\frac{f(x,y)-f(0,0)-\\nabla f\\cdot(x,y)}{\\|(x,y)\\|}\\to 0$, condizione più forte della sola esistenza delle parziali. Src 20230123 es.1."
+    }]
+  },
+
+  { pool:"diff", src:"20230504 Es.1 · soglie del parametro",
+    steps:[
+     { t:"Sia $f(x,y)=\\dfrac{\\sin y\\,(1-\\cos(xy))}{(x^2+y^2)^\\beta}$, $f(0,0)=0$. Sapendo che il numeratore $\\sim\\tfrac12 x^2y^3$, per quali $\\beta$ è CONTINUA in $(0,0)$?",
+       opts:[
+         {x:"$\\beta<5/2$: in polari $|f|\\sim\\rho^{\\,5-2\\beta}\\to 0\\iff 5-2\\beta>0$", c:true},
+         {x:"$\\beta<2$"},
+         {x:"$\\beta<5$"},
+         {x:"ogni $\\beta>0$"}
+       ],
+       hint:"Il numeratore è $O(\\rho^5)$ e il denominatore $\\rho^{2\\beta}$: la continuità chiede esponente netto positivo.",
+       sol:"In polari $|f|\\sim\\frac{\\rho^5}{\\rho^{2\\beta}}=\\rho^{5-2\\beta}\\to 0\\iff\\beta<5/2$. Soglia di CONTINUITÀ $\\beta<5/2$. Src 20230504 es.1.",
+       cont:"Continua &rarr; la differenziabilità"
+     },
+     { t:"Per la stessa $f$ (con $\\nabla f(0,0)=(0,0)$), la soglia di DIFFERENZIABILITÀ coincide con quella di continuità?",
+       opts:[
+         {x:"No: si studia $|f|/\\rho\\sim\\rho^{\\,4-2\\beta}\\to 0\\iff\\beta<2$, soglia più restrittiva", c:true},
+         {x:"Sì, coincidono: $\\beta<5/2$"},
+         {x:"Sì, $\\beta<5$"},
+         {x:"La differenziabilità vale per ogni $\\beta$ dove c'è continuità"}
+       ],
+       hint:"La differenziabilità aggiunge un $\\rho$ al denominatore (il $\\|(x,y)\\|$ del resto): la soglia scende.",
+       sol:"Con $\\nabla f(0,0)=0$ il rapporto è $\\frac{|f|}{\\rho}\\sim\\rho^{4-2\\beta}\\to 0\\iff\\beta<2$. Soglia di DIFFERENZIABILITÀ $\\beta<2<5/2$: non confondere le due soglie. Src 20230504 es.1."
+     }
+    ]
+  },
+
+  { pool:"diff", src:"20230123 Es.1 · direzione y=x",
+    steps:[{
+      t:"Per stabilire che $f(x,y)=\\dfrac{(x^2+2xy)\\sin(xy)}{(x^2+y^2)^{3/2}}$ (con $\\nabla f(0,0)=0$) NON è differenziabile in $(0,0)$, la strada più rapida è:",
+      opts:[
+        {x:"calcolare $\\lim\\frac{f}{\\rho}$ lungo $y=x$: dà una costante $\\ne 0$, quindi il limite del resto non è $0$", c:true},
+        {x:"verificare che $f$ è continua"},
+        {x:"controllare il limite solo lungo gli assi $x$ e $y$"},
+        {x:"calcolare $f_x(0,0)$ e $f_y(0,0)$"}
+      ],
+      hint:"Per NEGARE la differenziabilità basta UNA direzione lungo cui $f/\\rho$ non tende a $0$; la diagonale $y=x$ è la scelta tipica.",
+      sol:"Lungo $y=x$ il quoziente per la differenziabilità tende a una costante $\\ne 0$ (qui $\\propto 3$): il resto non è $o(\\rho)$, quindi non differenziabile. Controllare solo gli assi è insufficiente: la differenziabilità richiede TUTTE le direzioni. Src 20230123 es.1."
+    }]
+  },
+
+  { pool:"diff", src:"20230907 Es.1 · direzionali vs diff",
+    steps:[{
+      t:"In $(0,0)$ le derivate direzionali $\\partial_v f$ esistono per ogni versore $v$. Segue che $f$ è differenziabile?",
+      opts:[
+        {x:"No: l'esistenza di tutte le derivate direzionali non implica la differenziabilità (né la continuità)", c:true},
+        {x:"Sì: è la definizione di differenziabilità"},
+        {x:"Sì, se inoltre $\\partial_v f=\\nabla f\\cdot v$ per almeno due versori"},
+        {x:"Sì, purché $f$ sia continua in $(0,0)$"}
+      ],
+      hint:"Esistono funzioni con TUTTE le derivate direzionali in un punto, eppure non differenziabili e nemmeno continue lì.",
+      sol:"L'implicazione va nell'altro verso: $f$ differenziabile $\\Rightarrow\\partial_v f=\\nabla f\\cdot v$ per ogni $v$. Il viceversa è falso: le direzionali possono esistere senza linearità in $v$ e senza differenziabilità. Src 20230907 es.1."
+    }]
+  },
+
+  { pool:"diff", src:"20220622 Es.1 · limite del rapporto",
+    steps:[{
+      t:"Studiando una derivata direzionale compare $\\lim_{t\\to 0}\\dfrac{|t|^\\alpha}{t}$ (con $\\alpha>0$). Quando esiste finito?",
+      opts:[
+        {x:"vale $0$ se $\\alpha>1$; se $\\alpha=1$ i limiti destro e sinistro sono $\\pm 1$ (finiti); se $\\alpha<1$ diverge, non esiste finito", c:true},
+        {x:"esiste sempre e vale $0$"},
+        {x:"esiste finito solo se $\\alpha<1$"},
+        {x:"non esiste mai, per la presenza di $|t|$"}
+      ],
+      hint:"Scrivi $\\frac{|t|^\\alpha}{t}=\\operatorname{sgn}(t)\\,|t|^{\\alpha-1}$: tutto dipende dal segno dell'esponente $\\alpha-1$.",
+      sol:"$\\frac{|t|^\\alpha}{t}=\\operatorname{sgn}(t)|t|^{\\alpha-1}$. Se $\\alpha>1\\to 0$; se $\\alpha=1$ vale $\\pm 1$ (finiti, secondo il verso); se $\\alpha<1$ diverge. Questa dicotomia decide l'esistenza delle derivate direzionali. Src 20220622 es.1."
+    }]
+  }
+
+];
+
+/* ---------- POOL 10 : FUNZIONI IMPLICITE / DINI (FULL) ---------- */
+Q.dini = [
+
+  { pool:"dini", src:"tipo G · manuale · ipotesi",
+    steps:[{
+      t:"Il teorema del Dini applicato a $F(x,y)=0$ per esplicitare $y=g(x)$ vicino a $(x_0,y_0)$ richiede:",
+      opts:[
+        {x:"$F\\in C^1$ in un intorno, $F(x_0,y_0)=0$ e $F_y(x_0,y_0)\\ne 0$", c:true},
+        {x:"$F\\in C^1$ e $F_x(x_0,y_0)\\ne 0$"},
+        {x:"soltanto $F(x_0,y_0)=0$"},
+        {x:"$\\nabla F(x_0,y_0)=0$"}
+      ],
+      hint:"La derivata che deve essere non nulla è quella rispetto alla variabile che vuoi ESPLICITARE ($y$), non l'altra.",
+      sol:"Dini: $F\\in C^1$, $F(x_0,y_0)=0$ (il punto sta sull'insieme di livello) e $F_y(x_0,y_0)\\ne 0$ danno $y=g(x)$ locale con $F(x,g(x))=0$. Se invece $F_x\\ne 0$ si esplicita $x=h(y)$."
+    }]
+  },
+
+  { pool:"dini", src:"20220124 Es.1",
+    steps:[
+     { t:"Sia $F(x,y)=y^3\\sin x+y^2-2ye^x-3-x$, con $F(0,-1)=0$ e $F_y(0,-1)=-4\\ne 0$. Dini dà $y=g_0(x)$, $g_0(0)=-1$. Quanto vale $g_0'(0)$?",
+       opts:[
+         {x:"$g_0'(0)=-\\dfrac{F_x(0,-1)}{F_y(0,-1)}=0$ (il punto è critico per $g_0$)", c:true},
+         {x:"$g_0'(0)=-\\dfrac{F_y(0,-1)}{F_x(0,-1)}$"},
+         {x:"$g_0'(0)=F_x(0,-1)$"},
+         {x:"$g_0'(0)=-4$"}
+       ],
+       hint:"La formula della derivata implicita è $g'=-F_x/F_y$, con $F_x$ al NUMERATORE. Calcola $F_x(0,-1)$.",
+       sol:"$g'=-F_x/F_y$. Qui $F_x(0,-1)=0$ (i termini in $x$ si annullano), quindi $g_0'(0)=0$: punto critico di $g_0$. Src 20220124 es.1.",
+       cont:"Continua &rarr; la natura del punto"
+     },
+     { t:"Poiché $g_0'(0)=0$, si usa $g_0''(0)=-\\dfrac{F_{xx}(0,-1)}{F_y(0,-1)}$. Con $F_{xx}(0,-1)=2$ si ha $g_0''(0)=1/2>0$: che punto è?",
+       opts:[
+         {x:"minimo locale di $g_0$: $g_0'(0)=0$ e $g_0''(0)>0$", c:true},
+         {x:"massimo locale"},
+         {x:"flesso a tangente orizzontale"},
+         {x:"sella"}
+       ],
+       hint:"Per una funzione di una variabile: $g'=0$ e $g''>0$ classificano il punto.",
+       sol:"$g_0'(0)=0$ e $g_0''(0)=1/2>0\\Rightarrow$ minimo locale. Attenzione: la formula $g''=-F_{xx}/F_y$ vale SOLO perché $g'=0$; in generale compaiono anche $F_{xy}$ e $F_{yy}$. Src 20220124 es.1."
+     }
+    ]
+  },
+
+  { pool:"dini", src:"20220124 Es.1 · trappola g''",
+    steps:[{
+      t:"La formula $g''(x_0)=-\\dfrac{F_{xx}}{F_y}$ per la funzione implicita $y=g(x)$ è corretta:",
+      opts:[
+        {x:"solo quando $g'(x_0)=0$; altrimenti compaiono termini con $F_{xy}$ e $F_{yy}$", c:true},
+        {x:"sempre, in ogni punto"},
+        {x:"mai: la derivata seconda implicita non ha formula chiusa"},
+        {x:"solo se $F$ è un polinomio"}
+      ],
+      hint:"Deriva due volte $F(x,g(x))=0$: i termini $F_{xy}g'$ e $F_{yy}(g')^2$ spariscono solo se $g'=0$.",
+      sol:"Derivando due volte: $F_{xx}+2F_{xy}g'+F_{yy}(g')^2+F_y\\,g''=0$. Se $g'=0$ resta $g''=-F_{xx}/F_y$; altrimenti servono anche $F_{xy},F_{yy}$. Usare la formula ridotta con $g'\\ne 0$ è la trappola. Src 20220124 es.1."
+    }]
+  },
+
+  { pool:"dini", src:"20240122 Es.1 · piano tangente",
+    steps:[{
+      t:"$F(x,y,z)=\\sqrt{x^2+y^2+z^2+1}+x-z=1$ con $\\nabla F(0,0,0)=(1,0,-1)$ e $F_z(0,0,0)=-1\\ne 0$. Il piano tangente in $(0,0,0)$ alla superficie $z=g(x,y)$ del Dini è:",
+      opts:[
+        {x:"$z=x$: da $g_x=-F_x/F_z=1$ e $g_y=-F_y/F_z=0$", c:true},
+        {x:"$z=-x$"},
+        {x:"$z=x-y$"},
+        {x:"non definito perché $\\nabla F=0$"}
+      ],
+      hint:"$g_x=-F_x/F_z$, $g_y=-F_y/F_z$; il piano tangente è $z=g(0,0)+g_x x+g_y y$ con $g(0,0)=0$.",
+      sol:"$g_x=-\\frac{1}{-1}=1$, $g_y=-\\frac{0}{-1}=0$, $g(0,0)=0$: piano tangente $z=x$. Equivale a $\\nabla F\\cdot(x,y,z)=0$ perché $\\nabla F=(1,0,-1)$. Src 20240122 es.1."
+    }]
+  },
+
+  { pool:"dini", src:"20220907 Es.2 · Dini 3D + Hessiana",
+    steps:[{
+      t:"$F(x,y,z)=e^z+x^2y^2z-e^{xy}+x^4-y^4=0$ con $F_z(0,0,0)=1\\ne 0$ definisce $z=g(x,y)$; risulta $\\nabla g(0,0)=0$ e $g_{xx}=g_{yy}=0$, $g_{xy}=1$. Che punto critico è $(0,0)$ per $g$?",
+      opts:[
+        {x:"sella: $\\det H_g=g_{xx}g_{yy}-g_{xy}^2=0-1=-1<0$", c:true},
+        {x:"minimo"},
+        {x:"massimo"},
+        {x:"non è un punto critico"}
+      ],
+      hint:"Con $\\nabla g=0$ applica il test dell'Hessiana a $g$: $\\det H_g=g_{xx}g_{yy}-g_{xy}^2$.",
+      sol:"$\\det H_g=(0)(0)-1^2=-1<0\\Rightarrow$ sella. Il Dini fornisce $g$ implicita, poi si studia $g$ come normale funzione di due variabili col test dell'Hessiana. Src 20220907 es.2."
+    }]
+  }
+
+];
+
+/* =====================================================================
+   ENGINE
+   ===================================================================== */
+var S = { units:[], ui:0, si:0, correct:0, total:0, answered:false };
+
+function poolCount(id){ return (Q[id]||[]).reduce(function(n,u){return n+u.steps.length;},0); }
+
+function renderMenu(){
+  var g = document.getElementById('poolGrid');
+  g.innerHTML = '';
+  POOLS.forEach(function(p){
+    var units = Q[p.id]||[];
+    var n = poolCount(p.id);
+    var empty = units.length===0;
+    var card = document.createElement(empty?'div':'button');
+    card.className = 'pool-card'+(empty?' empty':'');
+    if(!empty) card.onclick = function(){ start(p.id); };
+    card.innerHTML =
+      '<div class="n">'+p.name+'</div>'+
+      '<div class="meta">Difficolt&agrave; '+p.diff+' &middot; '+(empty?'0 domande':(n+' passi')) +'</div>'+
+      '<span class="badge '+(p.status==='full'?'full':'todo')+'">'+
+        (p.status==='full'?'COMPLETO':'DA ESTENDERE')+'</span>';
+    g.appendChild(card);
+  });
+  typeset(g);
+}
+
+function start(poolId){
+  var units = [];
+  if(poolId==='ALL'){
+    POOLS.forEach(function(p){ (Q[p.id]||[]).forEach(function(u){ units.push(u); }); });
+  } else {
+    units = (Q[poolId]||[]).slice();
+  }
+  if(units.length===0) return;
+  units = shuffle(units.slice());
+  S = { units:units, ui:0, si:0, correct:0, total:0, answered:false, poolId:poolId };
+  show('quiz');
+  renderStep();
+}
+
+function poolNameById(id){
+  for(var i=0;i<POOLS.length;i++) if(POOLS[i].id===id) return POOLS[i].name;
+  return id;
+}
+
+function renderStep(){
+  var u = S.units[S.ui];
+  var st = u.steps[S.si];
+  S.answered = false;
+
+  // header
+  document.getElementById('qpool').innerHTML =
+    (S.poolId==='ALL'?'Mischia':poolNameById(S.poolId));
+  document.getElementById('qpos').innerHTML =
+    'Domanda '+(S.ui+1)+' / '+S.units.length+
+    (u.steps.length>1?(' &middot; parte '+(S.si+1)+'/'+u.steps.length):'')+
+    ' &middot; <span class="src">'+u.src+'</span>';
+  document.getElementById('qbar').style.width = (100*(S.ui)/S.units.length)+'%';
+
+  // figura (nessuna figura in AV, ma il gancio resta)
+  var fig = document.getElementById('qfig');
+  var svg = st.svg || (S.si===0 ? u.svg : null);
+  if(svg){ fig.innerHTML = svg; fig.classList.remove('hidden'); typeset(fig); }
+  else { fig.innerHTML=''; fig.classList.add('hidden'); }
+
+  var qt = document.getElementById('qtext');
+  qt.innerHTML = st.t;
+  typeset(qt);
+
+  // opzioni mescolate
+  var opts = shuffle(st.opts.map(function(o){return o;}));
+  var box = document.getElementById('qopts');
+  box.innerHTML = '';
+  opts.forEach(function(o){
+    var b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = o.x;
+    b.onclick = function(){ answer(b, o, st); };
+    box.appendChild(b);
+  });
+  typeset(box);
+
+  document.getElementById('qhint').classList.remove('show');
+  document.getElementById('qsol').classList.remove('show');
+  document.getElementById('qcont').classList.add('hidden');
+}
+
+function answer(btn, opt, st){
+  if(opt.c){
+    btn.classList.add('correct');
+    Array.prototype.forEach.call(document.querySelectorAll('#qopts .opt'),
+      function(b){ b.disabled = true; });
+    document.getElementById('qhint').classList.remove('show');
+    var sol = document.getElementById('qsol');
+    sol.innerHTML = '<b>Corretto.</b> '+st.sol;
+    sol.classList.add('show');
+    typeset(sol);
+    if(!S.answered){ S.correct++; }
+    S.answered = true;
+    var c = document.getElementById('qcont');
+    var last = (S.si === S.units[S.ui].steps.length-1);
+    c.innerHTML = last ? 'Prossima domanda &rarr;' : (st.cont || 'Continua &rarr;');
+    c.classList.remove('hidden');
+    c.onclick = nextStep;
+  } else {
+    btn.classList.add('wrong');
+    btn.disabled = true;
+    var h = document.getElementById('qhint');
+    h.innerHTML = '<b>Rivedi.</b> '+st.hint;
+    h.classList.add('show');
+    typeset(h);
+  }
+}
+
+function nextStep(){
+  var u = S.units[S.ui];
+  S.total++;
+  if(S.si < u.steps.length-1){
+    S.si++;
+    renderStep();
+  } else {
+    S.ui++;
+    S.si = 0;
+    if(S.ui >= S.units.length){ endQuiz(); }
+    else renderStep();
+  }
+}
+
+function endQuiz(){
+  show('end');
+  document.getElementById('endScore').innerHTML = S.correct+' / '+S.total;
+  var pct = S.total? Math.round(100*S.correct/S.total):0;
+  var msg = pct>=85 ? 'Livello d&rsquo;esame solido.' :
+            pct>=60 ? 'Buona base, ma alcuni trabocchetti ti hanno preso.' :
+                      'Rivedi i suggerimenti: gli errori sono concettuali, non di calcolo.';
+  document.getElementById('endMsg').innerHTML = 'Risposte corrette al primo tentativo. '+msg;
+}
+
+function toMenu(){ show('menu'); }
+
+function show(which){
+  ['menu','quiz','end'].forEach(function(id){
+    document.getElementById(id).classList.toggle('hidden', id!==which);
+  });
+  window.scrollTo(0,0);
+}
+
+/* Init dopo che i deferred KaTeX sono caricati (DOMContentLoaded li segue). */
+window.addEventListener('DOMContentLoaded', renderMenu);
+</script>
+</body>
+</html>
