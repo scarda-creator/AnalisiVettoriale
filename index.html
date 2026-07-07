@@ -538,6 +538,146 @@ Q.curve = [
       hint:"Teorema fondamentale per campi conservativi: dipende solo dagli estremi, nell'ordine finale meno iniziale.",
       sol:"$\\int_\\gamma \\nabla U\\cdot d\\ell=U(\\gamma(b))-U(\\gamma(a))=U(B)-U(A)$. Su curva chiusa ($A=B$) dà $0$. L'ordine è finale meno iniziale: invertirlo cambia segno (distrattore)."
     }]
+  },
+
+  { pool:"curve", src:"tipo curve · riparametrizzazione",
+    steps:[{
+      t:"L'integrale di seconda specie $\\int_\\gamma F\\cdot d\\ell$ come dipende dalla parametrizzazione della curva?",
+      opts:[
+        {x:"È invariante per riparametrizzazioni che PRESERVANO l'orientazione; cambia solo di segno se l'orientazione si inverte", c:true},
+        {x:"Dipende dalla velocità di percorrenza scelta"},
+        {x:"Dipende dal dominio $[a,b]$ del parametro"},
+        {x:"È sempre lo stesso, anche invertendo il verso"}
+      ],
+      hint:"Riparametrizzare significa comporre con un cambio di variabile monotono: se crescente conserva il verso, se decrescente lo inverte.",
+      sol:"Per il teorema di invarianza dell'integrale di linea, $\\int_\\gamma F\\cdot d\\ell$ non cambia sotto riparametrizzazioni $C^1$ con derivata positiva (stesso verso); una riparametrizzazione con derivata negativa inverte l'orientazione e cambia il segno. La velocità di percorrenza è irrilevante: contano solo il sostegno e il verso."
+    }]
+  },
+
+  /* ---- ESERCIZI DI CALCOLO (campione bilanciato, 07-07) ---- */
+
+  { pool:"curve", src:"tipo curve · manuale (I specie)",
+    steps:[{
+      t:"Calcola la lunghezza dell'elica $\\gamma(t)=(\\cos t,\\ \\sin t,\\ t)$, $t\\in[0,2\\pi]$, cioè $\\int_\\gamma 1\\,ds$.",
+      opts:[
+        {x:"$2\\sqrt{2}\\,\\pi$", c:true},
+        {x:"$2\\pi$"},
+        {x:"$\\sqrt{2}\\,\\pi$"},
+        {x:"$4\\pi$"}
+      ],
+      hint:"$ds=\\|\\gamma'(t)\\|\\,dt$: includi anche la componente $z'=1$, non solo le due del cerchio.",
+      sol:"Imposta $\\gamma'=(-\\sin t,\\cos t,1)$, da cui $\\|\\gamma'\\|=\\sqrt{\\sin^2 t+\\cos^2 t+1}=\\sqrt{2}$ (costante). Allora $L=\\int_\\gamma ds=\\int_0^{2\\pi}\\sqrt{2}\\,dt=2\\sqrt{2}\\,\\pi$. Definizione: $ds=\\|\\gamma'\\|\\,dt$. Dimenticare $z'$ dà $\\|\\gamma'\\|=1$ e il valore errato $2\\pi$."
+    }]
+  },
+
+  { pool:"curve", src:"tipo curve · manuale (I specie)",
+    steps:[{
+      t:"Calcola $\\int_\\gamma x\\,ds$ sul quarto di circonferenza $\\gamma(t)=(2\\cos t,\\ 2\\sin t)$, $t\\in[0,\\pi/2]$.",
+      opts:[
+        {x:"$4$", c:true},
+        {x:"$2$"},
+        {x:"$8$"},
+        {x:"$4\\pi$"}
+      ],
+      hint:"$ds=\\|\\gamma'\\|\\,dt$ con $\\|\\gamma'\\|=2$ (raggio $2$), non $dt$. Sostituisci anche $x=2\\cos t$ nell'integranda.",
+      sol:"Passi: $\\gamma'=(-2\\sin t,2\\cos t)$, $\\|\\gamma'\\|=2$; $x=2\\cos t$. Quindi $\\int_\\gamma x\\,ds=\\int_0^{\\pi/2}(2\\cos t)\\cdot 2\\,dt=4\\int_0^{\\pi/2}\\cos t\\,dt=4[\\sin t]_0^{\\pi/2}=4$. Formula dell'integrale di I specie $\\int_\\gamma f\\,ds=\\int_a^b f(\\gamma(t))\\|\\gamma'(t)\\|\\,dt$. Omettere il fattore $\\|\\gamma'\\|=2$ dà l'errore $2$."
+    }]
+  },
+
+  { pool:"curve", src:"tipo curve · lavoro (II specie)",
+    steps:[{
+      t:"Calcola il lavoro $\\int_\\gamma F\\cdot d\\ell$ del campo $F=(-y,\\ x)$ lungo la circonferenza unitaria $\\gamma(t)=(\\cos t,\\sin t)$, $t\\in[0,2\\pi]$ (verso antiorario).",
+      opts:[
+        {x:"$2\\pi$", c:true},
+        {x:"$0$"},
+        {x:"$-2\\pi$"},
+        {x:"$\\pi$"}
+      ],
+      hint:"Scrivi $d\\ell=\\gamma'(t)\\,dt$ e valuta $F$ SU $\\gamma(t)$: $F(\\gamma)=(-\\sin t,\\cos t)$.",
+      sol:"Passi: $\\gamma'=(-\\sin t,\\cos t)$ e $F(\\gamma)=(-\\sin t,\\cos t)$, quindi $F\\cdot\\gamma'=\\sin^2 t+\\cos^2 t=1$. $\\int_\\gamma F\\cdot d\\ell=\\int_0^{2\\pi}1\\,dt=2\\pi$. Il campo $(-y,x)$ non è conservativo (il suo rotore vale $2$): il lavoro su un giro chiuso non è nullo. Invertire il verso darebbe $-2\\pi$."
+    }]
+  },
+
+  { pool:"curve", src:"tipo curve · lavoro (II specie)",
+    steps:[{
+      t:"Calcola $\\int_\\gamma F\\cdot d\\ell$ con $F=(x^2,\\ xy)$ lungo l'arco di parabola $\\gamma(t)=(t,\\ t^2)$, $t\\in[0,1]$.",
+      opts:[
+        {x:"$\\dfrac{11}{15}$", c:true},
+        {x:"$\\dfrac{1}{3}$"},
+        {x:"$\\dfrac{2}{5}$"},
+        {x:"$\\dfrac{13}{15}$"}
+      ],
+      hint:"$d\\ell=(1,\\ 2t)\\,dt$: la seconda componente porta un fattore $2t$ da non dimenticare. Sostituisci $x=t$, $y=t^2$.",
+      sol:"Passi: $\\gamma'=(1,2t)$; $F(\\gamma)=(t^2,\\ t\\cdot t^2)=(t^2,t^3)$. Allora $F\\cdot\\gamma'=t^2+2t\\cdot t^3=t^2+2t^4$ e $\\int_0^1(t^2+2t^4)\\,dt=\\tfrac13+\\tfrac25=\\tfrac{11}{15}$. Definizione di II specie: $\\int_\\gamma F\\cdot d\\ell=\\int_a^b F(\\gamma)\\cdot\\gamma'\\,dt$. Tralasciare il secondo addendo (il contributo $2t\\,dy$) dà $\\tfrac13$."
+    }]
+  },
+
+  { pool:"curve", src:"tipo curve · ascissa curvilinea",
+    steps:[
+     { t:"Per $\\gamma(t)=(3\\cos t,\\ 3\\sin t)$, $t\\in[0,2\\pi]$, l'ascissa curvilinea $s(t)=\\int_0^t\\|\\gamma'(\\tau)\\|\\,d\\tau$ vale:",
+       opts:[
+         {x:"$s(t)=3t$", c:true},
+         {x:"$s(t)=t$"},
+         {x:"$s(t)=9t$"},
+         {x:"$s(t)=\\tfrac{3}{2}t^2$"}
+       ],
+       hint:"$\\|\\gamma'\\|$ è costante per un cerchio di raggio $3$: vale $3$, non $1$.",
+       sol:"$\\gamma'=(-3\\sin t,3\\cos t)$, $\\|\\gamma'\\|=\\sqrt{9\\sin^2 t+9\\cos^2 t}=3$. Quindi $s(t)=\\int_0^t 3\\,d\\tau=3t$; la lunghezza totale è $s(2\\pi)=6\\pi$ (circonferenza di raggio $3$).",
+       cont:"Continua &rarr; la riparametrizzazione"
+     },
+     { t:"Riparametrizzando $\\gamma$ con l'ascissa curvilinea (velocità unitaria), quale mappa $\\tilde\\gamma(s)$ si ottiene, $s\\in[0,6\\pi]$?",
+       opts:[
+         {x:"$\\tilde\\gamma(s)=(3\\cos(s/3),\\ 3\\sin(s/3))$", c:true},
+         {x:"$\\tilde\\gamma(s)=(3\\cos(3s),\\ 3\\sin(3s))$"},
+         {x:"$\\tilde\\gamma(s)=(3\\cos s,\\ 3\\sin s)$"},
+         {x:"$\\tilde\\gamma(s)=(\\cos(s/3),\\ \\sin(s/3))$"}
+       ],
+       hint:"Da $s=3t$ ricava $t=s/3$ e sostituisci. Controlla poi che $\\|\\tilde\\gamma'(s)\\|=1$.",
+       sol:"Invertendo $s=3t$ si ottiene $t=s/3$: $\\tilde\\gamma(s)=\\gamma(s/3)=(3\\cos(s/3),3\\sin(s/3))$. Verifica: $\\tilde\\gamma'=(-\\sin(s/3),\\cos(s/3))$, $\\|\\tilde\\gamma'\\|=1$. La riparametrizzazione per ascissa curvilinea dà sempre velocità unitaria (il raggio $3$ resta: gli estremi cambiano)."
+     }
+    ]
+  },
+
+  { pool:"curve", src:"tipo curve · coordinate polari",
+    steps:[{
+      t:"In coordinate polari, la curva $r=2\\cos\\theta$, $\\theta\\in[-\\pi/2,\\pi/2]$. La sua lunghezza, con $ds=\\sqrt{r^2+(dr/d\\theta)^2}\\,d\\theta$, vale:",
+      opts:[
+        {x:"$2\\pi$", c:true},
+        {x:"$4\\pi$"},
+        {x:"$\\pi$"},
+        {x:"$2$"}
+      ],
+      hint:"Calcola $r'=-2\\sin\\theta$ e semplifica $r^2+r'^2$: la curva è in realtà una circonferenza di raggio $1$.",
+      sol:"Passi: $r'=-2\\sin\\theta$, quindi $r^2+r'^2=4\\cos^2\\theta+4\\sin^2\\theta=4$ e $ds=\\sqrt{4}\\,d\\theta=2\\,d\\theta$. $L=\\int_{-\\pi/2}^{\\pi/2}2\\,d\\theta=2\\pi$. Coerente col fatto che $r=2\\cos\\theta$ è la circonferenza di centro $(1,0)$ e raggio $1$, lunghezza $2\\pi$. Usare $ds=r\\,d\\theta$ (formula dell'area, non della lunghezza) è l'errore."
+    }]
+  },
+
+  { pool:"curve", src:"tipo curve · orientazione (calcolo)",
+    steps:[{
+      t:"Calcola il lavoro di $F=(-y,\\ x)$ lungo la semicirconferenza superiore di raggio $1$ percorsa da $(-1,0)$ a $(1,0)$ (verso ORARIO).",
+      opts:[
+        {x:"$-\\pi$", c:true},
+        {x:"$\\pi$"},
+        {x:"$2\\pi$"},
+        {x:"$0$"}
+      ],
+      hint:"Il verso richiesto va da $(-1,0)$ a $(1,0)$ sull'arco superiore: parametrizza con $t$ da $\\pi$ a $0$, oppure calcola il verso antiorario e cambia segno.",
+      sol:"Su $\\gamma(t)=(\\cos t,\\sin t)$ vale $F\\cdot\\gamma'=1$. Il verso antiorario ($t:0\\to\\pi$, da $(1,0)$ a $(-1,0)$) dà $\\int_0^{\\pi}1\\,dt=+\\pi$. Il verso RICHIESTO è opposto, quindi $\\int_{-\\gamma}F\\cdot d\\ell=-\\pi$: l'integrale di II specie è orientato. Ignorare il verso è l'errore che porta a $+\\pi$."
+    }]
+  },
+
+  { pool:"curve", src:"tipo curve · conservativo (scorciatoia)",
+    steps:[{
+      t:"Calcola $\\int_\\gamma F\\cdot d\\ell$ con $F=(2xy+1,\\ x^2)$ lungo un cammino qualsiasi da $(0,0)$ a $(2,1)$ (ad es. l'arco $\\gamma(t)=(2t,\\ t^2)$, $t\\in[0,1]$).",
+      opts:[
+        {x:"$6$", c:true},
+        {x:"$4$"},
+        {x:"$8$"},
+        {x:"$0$"}
+      ],
+      hint:"Verifica $\\partial_y F_1=\\partial_x F_2$: se il campo è conservativo, non serve integrare lungo l'arco, basta il potenziale valutato agli estremi.",
+      sol:"Passi: $\\partial_y F_1=2x=\\partial_x F_2$, quindi su $\\mathbb{R}^2$ (semplicemente connesso) $F$ è conservativo. Potenziale: da $U_x=2xy+1$ segue $U=x^2y+x+c(y)$, e $U_y=x^2$ impone $c'=0$, dunque $U=x^2y+x$. Per il teorema fondamentale degli integrali di linea $\\int_\\gamma F\\cdot d\\ell=U(2,1)-U(0,0)=(4+2)-0=6$, indipendente dal cammino. Dimenticare il termine $+x$ del potenziale dà $4$."
+    }]
   }
 
 ];
