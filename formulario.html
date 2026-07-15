@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Formulario — Analisi Vettoriale</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  @page{size:A4 portrait;margin:7mm}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;color:#111;font-size:8.2pt;line-height:1.3;
+       columns:2;column-gap:7mm;padding:6mm}
+  h1{font-size:11pt;margin:0 0 1mm;column-span:all}
+  .hdr{column-span:all;border-bottom:1.5px solid #111;padding-bottom:1mm;margin-bottom:2mm;display:flex;justify-content:space-between;align-items:baseline}
+  .hdr small{font-weight:400;color:#555;font-size:7pt}
+  .blk{break-inside:avoid;margin-bottom:3.2mm;padding-left:2mm;border-left:2px solid #888}
+  .blk h3{margin:0 0 .6mm;font-size:8.6pt;color:#000}
+  .blk h3 .n{display:inline-block;background:#111;color:#fff;border-radius:3px;padding:0 3px;font-size:7.4pt;margin-right:3px}
+  .blk p{margin:.6mm 0}
+  .k{font-weight:600}
+  .ex{color:#334;background:#f1f3f7;border-radius:3px;padding:.6mm 1.4mm;display:block;margin-top:.6mm;font-size:7.6pt}
+  .trap{color:#7a2020;font-size:7.6pt;display:block;margin-top:.6mm}
+  .katex{font-size:1em}
+  .note{column-span:all;font-size:7pt;color:#666;border-top:1px solid #ccc;margin-top:2mm;padding-top:1mm}
+</style>
+</head>
+<body>
+<div class="hdr"><h1>Formulario — Analisi Vettoriale</h1><small>Sapienza · compendio dei 10 saper-fare · 2° esonero</small></div>
+
+<div class="blk"><h3><span class="n">01</span>EDO · Cauchy–Lipschitz</h3>
+<p><span class="k">Problema di Cauchy:</span> $y'=f(t,y),\ y(t_0)=y_0$. <span class="k">Esistenza+unicità</span> locale se $f$ continua in $(t,y)$ e <b>lipschitziana in $y$</b> (basta $f\in C^1$ → Lip. locale).</p>
+<p><span class="k">Peano:</span> $f$ solo continua ⇒ esiste (non per forza unica). <span class="k">Prolungamento:</span> la soluzione si estende finché non esce da ogni compatto (o esplode).</p>
+<p><span class="k">Separabili:</span> $y'=a(t)b(y)\Rightarrow \int\frac{dy}{b(y)}=\int a(t)\,dt$. <span class="k">Lineari 1° ord.:</span> $y'+a(t)y=g(t)$, $\mu=e^{\int a\,dt}$, $y=\frac{1}{\mu}\!\left(\int\mu g\,dt+C\right)$.</p>
+<p><span class="k">Qualitativa:</span> equilibri dove $f=0$; segno di $f$ ⇒ monotonia; equilibri stabili dove $f$ passa da $+$ a $-$.</p>
+<span class="trap">Trappola: le ipotesi sono su $f(t,u)$ come funzione delle due variabili, non su $y(t)$. $y'=\sqrt{|y|},y(0)=0$: non-Lip. in $0$ ⇒ infinite soluzioni.</span></div>
+
+<div class="blk"><h3><span class="n">02</span>Differenziabilità</h3>
+<p><span class="k">Gradiente:</span> $\nabla f=(\partial_{x_1}f,\dots,\partial_{x_n}f)$. <span class="k">Differenziabile</span> in $x_0$: $f(x_0+h)=f(x_0)+\nabla f(x_0)\cdot h+o(\lVert h\rVert)$.</p>
+<p><span class="k">Catena implicazioni:</span> $C^1$ (parziali continue) $\Rightarrow$ differenziabile $\Rightarrow$ continua e $\exists$ tutte le direzionali $D_vf=\nabla f\cdot v$.</p>
+<p><span class="k">Piano tangente:</span> $z=f(x_0,y_0)+\nabla f(x_0,y_0)\cdot(x-x_0,\,y-y_0)$. <span class="k">Jacobiana</span> $F:\mathbb R^n\!\to\!\mathbb R^m$: $JF=[\partial_j F_i]$. <span class="k">Catena:</span> $J(g\circ f)=Jg\cdot Jf$.</p>
+<span class="trap">$\exists$ parziali $\not\Rightarrow$ differenziabile $\not\Rightarrow$ continua. Controesempio $\frac{xy}{x^2+y^2}$: parziali in $0$ esistono, non continua.</span>
+<span class="ex">Test: se $\lim_{h\to0}\frac{f(x_0+h)-f(x_0)-\nabla f\cdot h}{\lVert h\rVert}\ne0$ (o non esiste) ⇒ non differenziabile.</span></div>
+
+<div class="blk"><h3><span class="n">03</span>Dini · funzione implicita</h3>
+<p><span class="k">Scalare:</span> $F(x,y)=0$, $F(x_0,y_0)=0$, $F\in C^1$, $\partial_yF(x_0,y_0)\ne0$ ⇒ localmente $y=g(x)$ con $g'(x)=-\dfrac{\partial_xF}{\partial_yF}$.</p>
+<p><span class="k">Livello regolare:</span> se $\nabla F\ne0$ sul livello $\{F=c\}$, questo è una curva/superficie liscia e $\nabla F\perp$ livello.</p>
+<p><span class="k">Vettoriale:</span> $F(x,y)=0$ con $y\in\mathbb R^k$: si esplicita $y=g(x)$ se il Jacobiano parziale $\partial_yF$ è invertibile; $Jg=-(\partial_yF)^{-1}\partial_xF$.</p>
+<span class="ex">Es. $x^2+y^2-1=0$ in $(0,1)$: $\partial_y=2y=2\ne0$ ⇒ $y=g(x)$, $g'=-x/y=0$.</span></div>
+
+<div class="blk"><h3><span class="n">04</span>Ottimizzazione</h3>
+<p><span class="k">Liberi:</span> punti critici $\nabla f=0$. Hessiana $H=[\partial_{ij}f]$: def. pos. → min, def. neg. → max, indefinita → sella.</p>
+<p><span class="k">In 2D:</span> $\det H>0,\ f_{xx}>0$ ⇒ min; $\det H>0,\ f_{xx}<0$ ⇒ max; $\det H<0$ ⇒ sella; $\det H=0$ ⇒ inconcluso.</p>
+<p><span class="k">Vincolati (Lagrange):</span> $\nabla f=\lambda\nabla g$ con $g=0$; più vincoli $\nabla f=\sum_i\lambda_i\nabla g_i$.</p>
+<p><span class="k">Weierstrass:</span> $f$ continua su compatto $K$ ⇒ ha max/min assoluti. Cerca su $\mathring K$ ($\nabla f=0$) <b>e</b> sul bordo $\partial K$.</p>
+<span class="trap">Sul bordo non basta $\nabla f=0$: parametrizza il bordo o usa Lagrange.</span></div>
+
+<div class="blk"><h3><span class="n">05</span>Serie numeriche e di potenze</h3>
+<p><span class="k">Necessaria:</span> $\sum a_n$ conv. ⇒ $a_n\to0$. <span class="k">Rapporto:</span> $\lim\big|\frac{a_{n+1}}{a_n}\big|=L$; <span class="k">radice:</span> $\limsup|a_n|^{1/n}=L$: $L<1$ conv., $L>1$ div.</p>
+<p><span class="k">Confronto</span> (asintotico) con $\sum\frac1{n^\alpha}$ (conv. $\iff\alpha>1$). <span class="k">Leibniz:</span> $\sum(-1)^na_n$ conv. se $a_n\downarrow0$. Assoluta ⇒ semplice.</p>
+<p><span class="k">Potenze:</span> $\sum a_n(x-x_0)^n$, raggio $R=\dfrac{1}{\limsup|a_n|^{1/n}}$ (o $\lim\big|\frac{a_n}{a_{n+1}}\big|$). Conv. in $|x-x_0|<R$, dubbio agli estremi.</p>
+<p><span class="k">Funzioni (Weierstrass M-test):</span> $|f_n(x)|\le M_n$, $\sum M_n<\infty$ ⇒ conv. <b>totale</b> ⇒ uniforme. Unif. ⇒ si integra/deriva termine a termine.</p></div>
+
+<div class="blk"><h3><span class="n">06</span>Curve</h3>
+<p><span class="k">Regolare:</span> $\gamma:[a,b]\to\mathbb R^n$, $\gamma'\ne0$. <span class="k">Lunghezza:</span> $L=\int_a^b\lVert\gamma'(t)\rVert\,dt$. <span class="k">Ascissa curvilinea</span> $s(t)=\int_a^t\lVert\gamma'\rVert$.</p>
+<p><span class="k">Versore tangente</span> $T=\dfrac{\gamma'}{\lVert\gamma'\rVert}$. <span class="k">Curvatura piana:</span> $k=\dfrac{|x'y''-y'x''|}{(x'^2+y'^2)^{3/2}}$.</p>
+<p><span class="k">Integrale di linea scalare:</span> $\int_\gamma f\,ds=\int_a^b f(\gamma(t))\lVert\gamma'(t)\rVert\,dt$ (indip. dalla parametrizz.).</p>
+<span class="ex">Es. circonf. $\gamma=(R\cos t,R\sin t)$: $\lVert\gamma'\rVert=R$, $L=2\pi R$, $k=1/R$.</span></div>
+
+<div class="blk"><h3><span class="n">07</span>Superfici</h3>
+<p><span class="k">Regolare:</span> $\sigma:D\to\mathbb R^3$, $\sigma_u\times\sigma_v\ne0$. <span class="k">Normale</span> $N=\dfrac{\sigma_u\times\sigma_v}{\lVert\sigma_u\times\sigma_v\rVert}$; piano tangente generato da $\sigma_u,\sigma_v$.</p>
+<p><span class="k">Area:</span> $A=\iint_D\lVert\sigma_u\times\sigma_v\rVert\,du\,dv$. <span class="k">Grafico</span> $z=f(x,y)$: $\lVert\sigma_u\times\sigma_v\rVert=\sqrt{1+f_x^2+f_y^2}$.</p>
+<p><span class="k">Integrale di superficie:</span> $\iint_S g\,dS=\iint_D g(\sigma)\lVert\sigma_u\times\sigma_v\rVert\,du\,dv$.</p>
+<span class="ex">Es. sfera $R$: $\lVert\sigma_u\times\sigma_v\rVert=R^2\sin\varphi$, $A=4\pi R^2$.</span></div>
+
+<div class="blk"><h3><span class="n">08</span>Divergenza · Gauss</h3>
+<p><span class="k">Divergenza:</span> $\operatorname{div}F=\nabla\cdot F=\sum_i\partial_{x_i}F_i$. <span class="k">Flusso</span> di $F$ uscente da $S$: $\Phi=\iint_S F\cdot N\,dS$.</p>
+<p><span class="k">Teorema della divergenza (Gauss):</span> $\displaystyle\iiint_V\operatorname{div}F\,dV=\iint_{\partial V}F\cdot N\,dS$, con $N$ normale <b>esterna</b> e $V$ con bordo regolare.</p>
+<span class="trap">Serve $F\in C^1$ su tutto $V$: se c'è una singolarità dentro (es. campo $\sim 1/r^2$ nell'origine), il teorema non si applica direttamente.</span></div>
+
+<div class="blk"><h3><span class="n">09</span>Rotore · Stokes · Green</h3>
+<p><span class="k">Rotore:</span> $\operatorname{rot}F=\nabla\times F=\big(\partial_yF_3-\partial_zF_2,\ \partial_zF_1-\partial_xF_3,\ \partial_xF_2-\partial_yF_1\big)$.</p>
+<p><span class="k">Stokes:</span> $\displaystyle\iint_S(\nabla\times F)\cdot N\,dS=\oint_{\partial S}F\cdot dr$ (orientazione coerente $N$/bordo, regola mano destra).</p>
+<p><span class="k">Green nel piano:</span> $\displaystyle\oint_{\partial D}(P\,dx+Q\,dy)=\iint_D(\partial_xQ-\partial_yP)\,dx\,dy$. <span class="k">Area:</span> $A=\frac12\oint(x\,dy-y\,dx)$.</p></div>
+
+<div class="blk"><h3><span class="n">10</span>Campi conservativi</h3>
+<p><span class="k">Equivalenze:</span> $F$ conservativo $\iff \exists U:\,F=\nabla U \iff \oint_\gamma F\cdot dr=0$ su ogni chiusa $\iff$ il lavoro $\int_\gamma F\cdot dr$ non dipende dal cammino.</p>
+<p><span class="k">Test necessario:</span> $\operatorname{rot}F=0$, cioè $\partial_{x_i}F_j=\partial_{x_j}F_i$. Su dominio <b>semplicemente connesso</b>: irrotazionale $\Rightarrow$ conservativo.</p>
+<p><span class="k">Potenziale:</span> integra $\partial_xU=F_1$ in $x$, deriva in $y$ e confronta con $F_2$, ecc. <span class="k">Lavoro:</span> $\int_\gamma F\cdot dr=U(B)-U(A)$.</p>
+<span class="trap">Irrotazionale su dominio <b>non</b> semplic. connesso (es. $\mathbb R^2\setminus\{0\}$, campo angolo) può <b>non</b> essere conservativo: controlla la circuitazione attorno al buco.</span></div>
+
+<div class="note">Compendio dal percorso saper-fare (Dedalo, 2026-07-15) — formule canoniche del 2° esonero; rileggile con occhio critico prima dell'esame. Stampa: apri nel browser, Ctrl/Cmd+P → «Salva come PDF», margini stretti → 2 pagine.</div>
+
+<script>
+window.addEventListener('load',function(){
+  renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});
+});
+</script>
+</body>
+</html>
