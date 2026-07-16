@@ -10,87 +10,134 @@
 <style>
   @page{size:A4 portrait;margin:7mm}
   *{box-sizing:border-box}
-  body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;color:#111;font-size:8.2pt;line-height:1.3;
+  body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;color:#111;font-size:10.6pt;line-height:1.34;
        columns:2;column-gap:7mm;padding:6mm}
-  h1{font-size:11pt;margin:0 0 1mm;column-span:all}
-  .hdr{column-span:all;border-bottom:1.5px solid #111;padding-bottom:1mm;margin-bottom:2mm;display:flex;justify-content:space-between;align-items:baseline}
-  .hdr small{font-weight:400;color:#555;font-size:7pt}
-  .blk{break-inside:avoid;margin-bottom:3.2mm;padding-left:2mm;border-left:2px solid #888}
-  .blk h3{margin:0 0 .6mm;font-size:8.6pt;color:#000}
-  .blk h3 .n{display:inline-block;background:#111;color:#fff;border-radius:3px;padding:0 3px;font-size:7.4pt;margin-right:3px}
-  .blk p{margin:.6mm 0}
+  h1{font-size:12.5pt;margin:0;column-span:all}
+  .hdr{column-span:all;border-bottom:1.6px solid #111;padding-bottom:1mm;margin-bottom:2.4mm;display:flex;justify-content:space-between;align-items:baseline}
+  .hdr small{font-weight:400;color:#555;font-size:7.8pt}
+  .blk{break-inside:avoid;margin-bottom:3.6mm;padding-left:2mm;border-left:2px solid #888}
+  .blk h3{margin:0 0 .8mm;font-size:9.6pt;color:#000}
+  .blk h3 .n{display:inline-block;background:#111;color:#fff;border-radius:3px;padding:0 4px;font-size:8pt;margin-right:3px}
+  .blk p{margin:.8mm 0}
+  .op{margin:.8mm 0}
+  .op b{color:#0a2a5e}
+  .s{color:#0a2a5e;font-weight:700}
   .k{font-weight:600}
-  .ex{color:#334;background:#f1f3f7;border-radius:3px;padding:.6mm 1.4mm;display:block;margin-top:.6mm;font-size:7.6pt}
-  .trap{color:#7a2020;font-size:7.6pt;display:block;margin-top:.6mm}
+  .ex{color:#243;background:#eef2f6;border-radius:3px;padding:.7mm 1.6mm;display:block;margin-top:.7mm;font-size:8.4pt}
+  .trap{color:#7a2020;font-size:8.4pt;display:block;margin-top:.6mm}
   .katex{font-size:1em}
-  .note{column-span:all;font-size:7pt;color:#666;border-top:1px solid #ccc;margin-top:2mm;padding-top:1mm}
+  .note{column-span:all;font-size:7.4pt;color:#666;border-top:1px solid #ccc;margin-top:2mm;padding-top:1mm}
+  /* pagina 3: esempi svolti */
+  .expage{column-span:all;break-before:page}
+  .exhdr{column-span:all;border-bottom:1.6px solid #111;padding-bottom:1mm;margin:0 0 2.4mm;font-size:12pt;font-weight:700}
+  /* gli esempi (dopo l'intestazione) più compatti, per stare in una pagina */
+  .exhdr ~ .blk{font-size:8.7pt;margin-bottom:2.8mm}
+  .exhdr ~ .blk h3{font-size:9pt}
 </style>
 </head>
 <body>
-<div class="hdr"><h1>Formulario — Analisi Vettoriale</h1><small>Sapienza · compendio dei 10 saper-fare · 2° esonero</small></div>
+<div class="hdr"><h1>Formulario operativo — Analisi Vettoriale</h1><small>Sapienza · 2° esonero · modus operandi + calcoli</small></div>
 
-<div class="blk"><h3><span class="n">01</span>EDO · Cauchy–Lipschitz</h3>
-<p><span class="k">Problema di Cauchy:</span> $y'=f(t,y),\ y(t_0)=y_0$. <span class="k">Esistenza+unicità</span> locale se $f$ continua in $(t,y)$ e <b>lipschitziana in $y$</b> (basta $f\in C^1$ → Lip. locale).</p>
-<p><span class="k">Peano:</span> $f$ solo continua ⇒ esiste (non per forza unica). <span class="k">Prolungamento:</span> la soluzione si estende finché non esce da ogni compatto (o esplode).</p>
-<p><span class="k">Separabili:</span> $y'=a(t)b(y)\Rightarrow \int\frac{dy}{b(y)}=\int a(t)\,dt$. <span class="k">Lineari 1° ord.:</span> $y'+a(t)y=g(t)$, $\mu=e^{\int a\,dt}$, $y=\frac{1}{\mu}\!\left(\int\mu g\,dt+C\right)$.</p>
-<p><span class="k">Qualitativa:</span> equilibri dove $f=0$; segno di $f$ ⇒ monotonia; equilibri stabili dove $f$ passa da $+$ a $-$.</p>
-<span class="trap">Trappola: le ipotesi sono su $f(t,u)$ come funzione delle due variabili, non su $y(t)$. $y'=\sqrt{|y|},y(0)=0$: non-Lip. in $0$ ⇒ infinite soluzioni.</span></div>
+<div class="blk"><h3><span class="n">01</span>EDO · risoluzione e Cauchy</h3>
+<p class="op"><b>Riconosci il tipo, poi:</b></p>
+<p><span class="s">Separabile</span> $y'=a(t)b(y)$: <span class="s">1)</span> $\dfrac{dy}{b(y)}=a(t)\,dt$ <span class="s">2)</span> integra ambo i lati <span class="s">3)</span> isola $y$ <span class="s">4)</span> imponi $y(t_0)=y_0$ per $C$. Controlla le radici di $b(y)=0$ (soluzioni costanti).</p>
+<p><span class="s">Lineare</span> $y'+a(t)y=g(t)$: $\mu=e^{\int a\,dt}$, poi $y=\dfrac{1}{\mu}\!\left(\int\mu g\,dt+C\right)$.</p>
+<p><span class="k">Cauchy–Lipschitz:</span> $f$ e $\partial_yf$ continue in un intorno di $(t_0,y_0)\Rightarrow$ esistenza+unicità locale.</p>
+<p><span class="k">Qualitativa:</span> equilibri $f=0$; segno di $f$ a tratti $\to$ monotonia; stabile dove $f$ passa $+\!\to\!-$; prolunga finché non esplode/esce dai compatti.</p>
+<span class="trap">Ipotesi su $f(t,u)$, non su $y(t)$. $y'=\sqrt{|y|},\,y(0)=0$: non-Lip. $\Rightarrow$ ∞ soluzioni.</span></div>
 
 <div class="blk"><h3><span class="n">02</span>Differenziabilità</h3>
-<p><span class="k">Gradiente:</span> $\nabla f=(\partial_{x_1}f,\dots,\partial_{x_n}f)$. <span class="k">Differenziabile</span> in $x_0$: $f(x_0+h)=f(x_0)+\nabla f(x_0)\cdot h+o(\lVert h\rVert)$.</p>
-<p><span class="k">Catena implicazioni:</span> $C^1$ (parziali continue) $\Rightarrow$ differenziabile $\Rightarrow$ continua e $\exists$ tutte le direzionali $D_vf=\nabla f\cdot v$.</p>
-<p><span class="k">Piano tangente:</span> $z=f(x_0,y_0)+\nabla f(x_0,y_0)\cdot(x-x_0,\,y-y_0)$. <span class="k">Jacobiana</span> $F:\mathbb R^n\!\to\!\mathbb R^m$: $JF=[\partial_j F_i]$. <span class="k">Catena:</span> $J(g\circ f)=Jg\cdot Jf$.</p>
-<span class="trap">$\exists$ parziali $\not\Rightarrow$ differenziabile $\not\Rightarrow$ continua. Controesempio $\frac{xy}{x^2+y^2}$: parziali in $0$ esistono, non continua.</span>
-<span class="ex">Test: se $\lim_{h\to0}\frac{f(x_0+h)-f(x_0)-\nabla f\cdot h}{\lVert h\rVert}\ne0$ (o non esiste) ⇒ non differenziabile.</span></div>
+<p class="op"><b>Provare che $f$ è diff. in $x_0$:</b> <span class="s">1)</span> calcola $\nabla f(x_0)=(f_x,f_y)$ <span class="s">2)</span> verifica $\displaystyle\lim_{h\to0}\frac{f(x_0+h)-f(x_0)-\nabla f(x_0)\cdot h}{\lVert h\rVert}=0$.</p>
+<p><span class="k">Trucco:</span> passa in polari $h=(\rho\cos\theta,\rho\sin\theta)$ e mostra il limite $\to0$ <b>uniformemente in $\theta$</b>. Se dipende da $\theta$ o $\ne0\Rightarrow$ non diff.</p>
+<p><span class="k">Scorciatoie:</span> $f\in C^1$ (parziali continue) $\Rightarrow$ diff. Diff $\Rightarrow$ continua e $D_vf=\nabla f\cdot v$ ($\lVert v\rVert=1$). Piano tang. $z=f(x_0)+\nabla f\cdot(x-x_0)$.</p>
+<span class="trap">$\exists\,f_x,f_y \not\Rightarrow$ diff $\not\Rightarrow$ continua (es. $\frac{xy}{x^2+y^2}$ in $0$).</span></div>
 
 <div class="blk"><h3><span class="n">03</span>Dini · funzione implicita</h3>
-<p><span class="k">Scalare:</span> $F(x,y)=0$, $F(x_0,y_0)=0$, $F\in C^1$, $\partial_yF(x_0,y_0)\ne0$ ⇒ localmente $y=g(x)$ con $g'(x)=-\dfrac{\partial_xF}{\partial_yF}$.</p>
-<p><span class="k">Livello regolare:</span> se $\nabla F\ne0$ sul livello $\{F=c\}$, questo è una curva/superficie liscia e $\nabla F\perp$ livello.</p>
-<p><span class="k">Vettoriale:</span> $F(x,y)=0$ con $y\in\mathbb R^k$: si esplicita $y=g(x)$ se il Jacobiano parziale $\partial_yF$ è invertibile; $Jg=-(\partial_yF)^{-1}\partial_xF$.</p>
-<span class="ex">Es. $x^2+y^2-1=0$ in $(0,1)$: $\partial_y=2y=2\ne0$ ⇒ $y=g(x)$, $g'=-x/y=0$.</span></div>
+<p class="op"><b>Esplicitare $y=g(x)$ da $F(x,y)=0$ in $(x_0,y_0)$:</b> <span class="s">1)</span> $F(x_0,y_0)=0$, $F\in C^1$ <span class="s">2)</span> $\partial_yF(x_0,y_0)\ne0$ $\Rightarrow g$ esiste local. <span class="s">3)</span> $g'(x_0)=-\dfrac{\partial_xF}{\partial_yF}\Big|_{(x_0,y_0)}$.</p>
+<p><span class="k">Tangente al livello</span> $\{F=c\}$: $\nabla F(x_0,y_0)\cdot(x-x_0,\,y-y_0)=0$ (e $\nabla F\perp$ livello se $\ne0$).</p>
+<p><span class="k">Vettoriale:</span> se la matrice $\partial_yF$ è invertibile, $Jg=-(\partial_yF)^{-1}\partial_xF$.</p>
+<span class="ex">Es. $x^2+y^2=1$ in $(0,1)$: $\partial_y=2\ne0\Rightarrow g'=-x/y=0$.</span></div>
 
 <div class="blk"><h3><span class="n">04</span>Ottimizzazione</h3>
-<p><span class="k">Liberi:</span> punti critici $\nabla f=0$. Hessiana $H=[\partial_{ij}f]$: def. pos. → min, def. neg. → max, indefinita → sella.</p>
-<p><span class="k">In 2D:</span> $\det H>0,\ f_{xx}>0$ ⇒ min; $\det H>0,\ f_{xx}<0$ ⇒ max; $\det H<0$ ⇒ sella; $\det H=0$ ⇒ inconcluso.</p>
-<p><span class="k">Vincolati (Lagrange):</span> $\nabla f=\lambda\nabla g$ con $g=0$; più vincoli $\nabla f=\sum_i\lambda_i\nabla g_i$.</p>
-<p><span class="k">Weierstrass:</span> $f$ continua su compatto $K$ ⇒ ha max/min assoluti. Cerca su $\mathring K$ ($\nabla f=0$) <b>e</b> sul bordo $\partial K$.</p>
-<span class="trap">Sul bordo non basta $\nabla f=0$: parametrizza il bordo o usa Lagrange.</span></div>
+<p class="op"><b>Liberi:</b> <span class="s">1)</span> $\nabla f=0\to$ critici <span class="s">2)</span> Hessiana $H=\left(\begin{smallmatrix}f_{xx}&f_{xy}\\ f_{xy}&f_{yy}\end{smallmatrix}\right)$: $\det H\gt 0,\ f_{xx}\gt 0\Rightarrow$ min; $\det H\gt 0,\ f_{xx}\lt 0\Rightarrow$ max; $\det H\lt 0\Rightarrow$ sella; $\det H=0\Rightarrow$ a mano.</p>
+<p class="op"><b>Vincolati</b> $g=0$ <b>(Lagrange):</b> risolvi $\nabla f=\lambda\nabla g$ con $g=0$ (sistema in $x,y,\lambda$), poi confronta $f$ nei candidati.</p>
+<p class="op"><b>Assoluti su compatto $K$:</b> candidati interni ($\nabla f=0$) $+$ candidati bordo (parametrizza $\partial K$ o Lagrange) $\to$ valuta $f$ in tutti $\to$ max/min.</p></div>
 
 <div class="blk"><h3><span class="n">05</span>Serie numeriche e di potenze</h3>
-<p><span class="k">Necessaria:</span> $\sum a_n$ conv. ⇒ $a_n\to0$. <span class="k">Rapporto:</span> $\lim\big|\frac{a_{n+1}}{a_n}\big|=L$; <span class="k">radice:</span> $\limsup|a_n|^{1/n}=L$: $L<1$ conv., $L>1$ div.</p>
-<p><span class="k">Confronto</span> (asintotico) con $\sum\frac1{n^\alpha}$ (conv. $\iff\alpha>1$). <span class="k">Leibniz:</span> $\sum(-1)^na_n$ conv. se $a_n\downarrow0$. Assoluta ⇒ semplice.</p>
-<p><span class="k">Potenze:</span> $\sum a_n(x-x_0)^n$, raggio $R=\dfrac{1}{\limsup|a_n|^{1/n}}$ (o $\lim\big|\frac{a_n}{a_{n+1}}\big|$). Conv. in $|x-x_0|<R$, dubbio agli estremi.</p>
-<p><span class="k">Funzioni (Weierstrass M-test):</span> $|f_n(x)|\le M_n$, $\sum M_n<\infty$ ⇒ conv. <b>totale</b> ⇒ uniforme. Unif. ⇒ si integra/deriva termine a termine.</p></div>
+<p class="op"><b>$\sum a_n$:</b> <span class="s">1)</span> $a_n\to0$? no $\Rightarrow$ diverge <span class="s">2)</span> rapporto $\big|\frac{a_{n+1}}{a_n}\big|\!\to\!L$ o radice $|a_n|^{1/n}\!\to\!L$: $L\lt 1$ conv <span class="s">3)</span> confronto asintotico con $\sum\frac{1}{n^\alpha}$ ($\alpha\gt 1$ conv) <span class="s">4)</span> alternata: Leibniz ($a_n\downarrow0$). Assoluta $\Rightarrow$ semplice.</p>
+<p class="op"><b>Potenze $\sum a_n(x-x_0)^n$:</b> $R=\dfrac{1}{\limsup|a_n|^{1/n}}$ (o $\lim\big|\frac{a_n}{a_{n+1}}\big|$); conv. $|x-x_0|\lt R$; <b>testa gli estremi a parte</b>.</p>
+<p><span class="k">Funzioni (M-test):</span> $|f_n(x)|\le M_n,\ \sum M_n\lt\infty\Rightarrow$ conv. totale $\Rightarrow$ uniforme $\Rightarrow$ integri/derivi termine a termine.</p></div>
 
 <div class="blk"><h3><span class="n">06</span>Curve</h3>
-<p><span class="k">Regolare:</span> $\gamma:[a,b]\to\mathbb R^n$, $\gamma'\ne0$. <span class="k">Lunghezza:</span> $L=\int_a^b\lVert\gamma'(t)\rVert\,dt$. <span class="k">Ascissa curvilinea</span> $s(t)=\int_a^t\lVert\gamma'\rVert$.</p>
-<p><span class="k">Versore tangente</span> $T=\dfrac{\gamma'}{\lVert\gamma'\rVert}$. <span class="k">Curvatura piana:</span> $k=\dfrac{|x'y''-y'x''|}{(x'^2+y'^2)^{3/2}}$.</p>
-<p><span class="k">Integrale di linea scalare:</span> $\int_\gamma f\,ds=\int_a^b f(\gamma(t))\lVert\gamma'(t)\rVert\,dt$ (indip. dalla parametrizz.).</p>
-<span class="ex">Es. circonf. $\gamma=(R\cos t,R\sin t)$: $\lVert\gamma'\rVert=R$, $L=2\pi R$, $k=1/R$.</span></div>
+<p class="op"><b>Data $\gamma(t)$:</b> <span class="s">1)</span> regolare se $\gamma'\ne0$ <span class="s">2)</span> lunghezza $L=\int_a^b\lVert\gamma'\rVert\,dt$ <span class="s">3)</span> tangente $T=\gamma'/\lVert\gamma'\rVert$ <span class="s">4)</span> curvatura piana $k=\dfrac{|x'y''-y'x''|}{(x'^2+y'^2)^{3/2}}$ <span class="s">5)</span> integrale di linea $\int_\gamma f\,ds=\int f(\gamma)\lVert\gamma'\rVert\,dt$.</p>
+<p>Ascissa curvilinea $s(t)=\int_a^t\lVert\gamma'\rVert$; indipendente dalla parametrizzazione.</p>
+<span class="ex">Circonf. $R$: $\lVert\gamma'\rVert=R$, $L=2\pi R$, $k=1/R$.</span></div>
 
 <div class="blk"><h3><span class="n">07</span>Superfici</h3>
-<p><span class="k">Regolare:</span> $\sigma:D\to\mathbb R^3$, $\sigma_u\times\sigma_v\ne0$. <span class="k">Normale</span> $N=\dfrac{\sigma_u\times\sigma_v}{\lVert\sigma_u\times\sigma_v\rVert}$; piano tangente generato da $\sigma_u,\sigma_v$.</p>
-<p><span class="k">Area:</span> $A=\iint_D\lVert\sigma_u\times\sigma_v\rVert\,du\,dv$. <span class="k">Grafico</span> $z=f(x,y)$: $\lVert\sigma_u\times\sigma_v\rVert=\sqrt{1+f_x^2+f_y^2}$.</p>
-<p><span class="k">Integrale di superficie:</span> $\iint_S g\,dS=\iint_D g(\sigma)\lVert\sigma_u\times\sigma_v\rVert\,du\,dv$.</p>
-<span class="ex">Es. sfera $R$: $\lVert\sigma_u\times\sigma_v\rVert=R^2\sin\varphi$, $A=4\pi R^2$.</span></div>
+<p class="op"><b>Data $\sigma(u,v)$:</b> <span class="s">1)</span> $\sigma_u,\sigma_v$ <span class="s">2)</span> $N=\sigma_u\times\sigma_v$ (regolare se $\ne0$) <span class="s">3)</span> area $\displaystyle\iint_D\lVert\sigma_u\times\sigma_v\rVert\,du\,dv$ <span class="s">4)</span> $\displaystyle\iint_S g\,dS=\iint_D g(\sigma)\lVert\sigma_u\times\sigma_v\rVert$.</p>
+<p><span class="k">Grafico</span> $z=f(x,y)$: $\lVert\sigma_u\times\sigma_v\rVert=\sqrt{1+f_x^2+f_y^2}$.</p>
+<span class="ex">Sfera $R$: $\lVert\sigma_u\times\sigma_v\rVert=R^2\sin\varphi$, area $=4\pi R^2$.</span></div>
 
-<div class="blk"><h3><span class="n">08</span>Divergenza · Gauss</h3>
-<p><span class="k">Divergenza:</span> $\operatorname{div}F=\nabla\cdot F=\sum_i\partial_{x_i}F_i$. <span class="k">Flusso</span> di $F$ uscente da $S$: $\Phi=\iint_S F\cdot N\,dS$.</p>
-<p><span class="k">Teorema della divergenza (Gauss):</span> $\displaystyle\iiint_V\operatorname{div}F\,dV=\iint_{\partial V}F\cdot N\,dS$, con $N$ normale <b>esterna</b> e $V$ con bordo regolare.</p>
-<span class="trap">Serve $F\in C^1$ su tutto $V$: se c'è una singolarità dentro (es. campo $\sim 1/r^2$ nell'origine), il teorema non si applica direttamente.</span></div>
+<div class="blk"><h3><span class="n">08</span>Flusso · Gauss</h3>
+<p class="op"><b>Flusso $\iint_S F\cdot N\,dS$:</b> se $S$ è <b>chiusa</b> e $F\in C^1$ dentro $V$, conviene Gauss: $\displaystyle\iint_{\partial V}F\cdot N\,dS=\iiint_V\operatorname{div}F\,dV$, $\operatorname{div}F=\sum_i\partial_{x_i}F_i$, $N$ esterna.</p>
+<p>$S$ aperta: parametrizza e calcola diretto $\iint_D F(\sigma)\cdot(\sigma_u\times\sigma_v)\,du\,dv$ (occhio all'orientazione).</p>
+<span class="trap">Singolarità dentro $V$ (campo $\sim 1/r^2$): isola con una pallina, Gauss non si applica diretto.</span></div>
 
-<div class="blk"><h3><span class="n">09</span>Rotore · Stokes · Green</h3>
-<p><span class="k">Rotore:</span> $\operatorname{rot}F=\nabla\times F=\big(\partial_yF_3-\partial_zF_2,\ \partial_zF_1-\partial_xF_3,\ \partial_xF_2-\partial_yF_1\big)$.</p>
-<p><span class="k">Stokes:</span> $\displaystyle\iint_S(\nabla\times F)\cdot N\,dS=\oint_{\partial S}F\cdot dr$ (orientazione coerente $N$/bordo, regola mano destra).</p>
-<p><span class="k">Green nel piano:</span> $\displaystyle\oint_{\partial D}(P\,dx+Q\,dy)=\iint_D(\partial_xQ-\partial_yP)\,dx\,dy$. <span class="k">Area:</span> $A=\frac12\oint(x\,dy-y\,dx)$.</p></div>
+<div class="blk"><h3><span class="n">09</span>Circuitazione · Stokes · Green</h3>
+<p class="op"><b>$\oint_{\partial S}F\cdot dr$:</b> usa Stokes $\displaystyle\iint_S(\nabla\times F)\cdot N\,dS$ (o viceversa se il rotore è semplice). $\nabla\times F=(\partial_yF_3-\partial_zF_2,\ \partial_zF_1-\partial_xF_3,\ \partial_xF_2-\partial_yF_1)$.</p>
+<p><span class="k">Nel piano (Green):</span> $\displaystyle\oint_{\partial D}(P\,dx+Q\,dy)=\iint_D(\partial_xQ-\partial_yP)\,dx\,dy$. <span class="k">Area:</span> $\tfrac12\oint(x\,dy-y\,dx)$.</p>
+<span class="trap">Orientazione coerente $N$/bordo (mano destra), $\partial D$ antioraria.</span></div>
 
-<div class="blk"><h3><span class="n">10</span>Campi conservativi</h3>
-<p><span class="k">Equivalenze:</span> $F$ conservativo $\iff \exists U:\,F=\nabla U \iff \oint_\gamma F\cdot dr=0$ su ogni chiusa $\iff$ il lavoro $\int_\gamma F\cdot dr$ non dipende dal cammino.</p>
-<p><span class="k">Test necessario:</span> $\operatorname{rot}F=0$, cioè $\partial_{x_i}F_j=\partial_{x_j}F_i$. Su dominio <b>semplicemente connesso</b>: irrotazionale $\Rightarrow$ conservativo.</p>
-<p><span class="k">Potenziale:</span> integra $\partial_xU=F_1$ in $x$, deriva in $y$ e confronta con $F_2$, ecc. <span class="k">Lavoro:</span> $\int_\gamma F\cdot dr=U(B)-U(A)$.</p>
-<span class="trap">Irrotazionale su dominio <b>non</b> semplic. connesso (es. $\mathbb R^2\setminus\{0\}$, campo angolo) può <b>non</b> essere conservativo: controlla la circuitazione attorno al buco.</span></div>
+<div class="blk"><h3><span class="n">10</span>Campi conservativi + potenziale</h3>
+<p class="op"><b>Modus:</b> <span class="s">1)</span> test $\operatorname{rot}F=0$ ($\partial_iF_j=\partial_jF_i$)? no $\Rightarrow$ non cons. <span class="s">2)</span> sì e dominio <b>sempl. connesso</b> $\Rightarrow$ conservativo <span class="s">3)</span> potenziale: $U=\int F_1\,dx+\varphi(y)$, poi $\partial_yU=F_2\Rightarrow\varphi'(y)\Rightarrow U$ <span class="s">4)</span> lavoro $\int_\gamma F\cdot dr=U(B)-U(A)$.</p>
+<span class="trap">Dominio <b>bucato</b> (es. $\mathbb R^2\setminus\{0\}$): irrotazionale $\not\Rightarrow$ conservativo — controlla la circuitazione attorno al buco.</span></div>
 
-<div class="note">Compendio dal percorso saper-fare (Dedalo, 2026-07-15) — formule canoniche del 2° esonero; rileggile con occhio critico prima dell'esame. Stampa: apri nel browser, Ctrl/Cmd+P → «Salva come PDF», margini stretti → 2 pagine.</div>
+<div class="blk"><h3><span class="n">11</span>Integrali multipli + cambio variabili</h3>
+<p class="op"><b>Modus:</b> <span class="s">1)</span> disegna il dominio $D$ <span class="s">2)</span> scegli ordine/coordinate <span class="s">3)</span> integra da dentro a fuori.</p>
+<p><span class="k">Fubini</span> ($D$ normale in $x$): $\displaystyle\iint_D f=\int_a^b\!\!\left(\int_{g_1(x)}^{g_2(x)}\! f\,dy\right)dx$.</p>
+<p><span class="k">Cambio variabili:</span> $\displaystyle\iint_D f\,dx\,dy=\iint_{D'} f(x(u,v),y(u,v))\,|\det J|\,du\,dv$, $J=\dfrac{\partial(x,y)}{\partial(u,v)}$.</p>
+<p><span class="k">Polari</span> $x=\rho\cos\theta,y=\rho\sin\theta$: $dx\,dy=\rho\,d\rho\,d\theta$. <span class="k">Cilindriche:</span> $dV=\rho\,d\rho\,d\theta\,dz$. <span class="k">Sferiche</span> $x=r\sin\varphi\cos\theta,\dots$: $dV=r^2\sin\varphi\,dr\,d\varphi\,d\theta$.</p>
+<span class="trap">Metti $|\det J|$ (valore assoluto) e ricava i <b>nuovi estremi</b> dal dominio trasformato.</span></div>
+
+<div class="blk"><h3><span class="n">12</span>Limiti e continuità in $\mathbb R^2$</h3>
+<p class="op"><b>$\lim_{(x,y)\to(0,0)}f$:</b> <span class="s">1)</span> prova restrizioni $y=mx$, $y=x^2$: se danno valori diversi $\Rightarrow$ <b>non esiste</b> <span class="s">2)</span> se coincidono ($=L$), passa in polari e maggiora $|f-L|\le h(\rho)\to0$ <b>indip. da $\theta$</b> $\Rightarrow$ limite $=L$.</p>
+<p><span class="k">Continuità in $0$:</span> $\lim_{(x,y)\to0}f=f(0)$.</p>
+<span class="ex">$\dfrac{x^2y}{x^2+y^2}$: in polari $=\rho\cos^2\theta\sin\theta$, $|{\cdot}|\le\rho\to0\Rightarrow$ limite $0$.</span></div>
+
+<div class="note">Formulario operativo dal percorso saper-fare (Dedalo, 2026-07-16) — formule e procedure canoniche del 2° esonero; rileggile con occhio critico prima dell'esame. PDF: apri, Ctrl/Cmd+P → «Salva come PDF», margini stretti.</div>
+
+<div class="expage"></div>
+<div class="exhdr">Esempi svolti — Analisi Vettoriale</div>
+
+<div class="blk"><h3><span class="n">E1</span>EDO separabile</h3>
+<p>$y'=y^2 t,\ y(0)=1$. Separo: $\dfrac{dy}{y^2}=t\,dt\Rightarrow-\dfrac1y=\dfrac{t^2}{2}+C$. Da $y(0)=1$: $-1=C$. Quindi $-\dfrac1y=\dfrac{t^2}{2}-1\Rightarrow y=\dfrac{2}{2-t^2}$ (valida per $|t|\lt\sqrt2$).</p></div>
+
+<div class="blk"><h3><span class="n">E2</span>EDO lineare</h3>
+<p>$y'+2ty=t$. $\mu=e^{\int 2t\,dt}=e^{t^2}$. $y=e^{-t^2}\!\left(\int t\,e^{t^2}dt+C\right)=e^{-t^2}\!\left(\tfrac12 e^{t^2}+C\right)=\tfrac12+Ce^{-t^2}$.</p></div>
+
+<div class="blk"><h3><span class="n">E3</span>Differenziabilità</h3>
+<p>$f=\dfrac{x^3}{x^2+y^2}$ (e $f(0)=0$). $f_x(0)=1,f_y(0)=0$, quindi candidato $\nabla f(0)=(1,0)$. Rapporto incrementale in polari: $\dfrac{f-\nabla f\cdot h}{\rho}=\dfrac{\rho\cos^3\theta-\rho\cos\theta}{\rho}=\cos^3\theta-\cos\theta\ne0$ (dipende da $\theta$) $\Rightarrow$ <b>non differenziabile</b>.</p></div>
+
+<div class="blk"><h3><span class="n">E4</span>Dini + tangente</h3>
+<p>$F=x^2+xy+y^2-3=0$ in $(1,1)$: $F(1,1)=0$, $F_y=x+2y=3\ne0\Rightarrow y=g(x)$. $g'(1)=-\dfrac{F_x}{F_y}=-\dfrac{2x+y}{x+2y}\Big|_{(1,1)}=-1$. Tangente: $y-1=-1(x-1)$.</p></div>
+
+<div class="blk"><h3><span class="n">E5</span>Ottimizzazione vincolata</h3>
+<p>$\max/\min$ di $f=xy$ su $x^2+y^2=1$. Lagrange: $\nabla f=\lambda\nabla g$: $y=2\lambda x,\ x=2\lambda y$. $\Rightarrow x^2=y^2$; col vincolo $x=\pm\tfrac1{\sqrt2},y=\pm\tfrac1{\sqrt2}$. $f=\tfrac12$ (max) e $f=-\tfrac12$ (min).</p></div>
+
+<div class="blk"><h3><span class="n">E6</span>Raggio di convergenza</h3>
+<p>$\sum\dfrac{x^n}{n\,3^n}$. $R=\lim\left|\dfrac{a_n}{a_{n+1}}\right|=\lim\dfrac{(n+1)3^{n+1}}{n\,3^n}=3$. In $x=3$: $\sum\tfrac1n$ diverge; in $x=-3$: $\sum\tfrac{(-1)^n}{n}$ converge (Leibniz). Intervallo $[-3,3)$.</p></div>
+
+<div class="blk"><h3><span class="n">E7</span>Integrale doppio in polari</h3>
+<p>$\displaystyle\iint_D (x^2+y^2)\,dx\,dy$, $D:\,x^2+y^2\le4$. Polari: $\displaystyle\int_0^{2\pi}\!\!\int_0^2 \rho^2\cdot\rho\,d\rho\,d\theta=2\pi\left[\tfrac{\rho^4}{4}\right]_0^2=2\pi\cdot4=8\pi$.</p></div>
+
+<div class="blk"><h3><span class="n">E8</span>Campo conservativo + potenziale</h3>
+<p>$F=(2xy,\,x^2+1)$. Rot: $\partial_y(2xy)=2x=\partial_x(x^2+1)\Rightarrow$ conservativo (su $\mathbb R^2$). $U=\int 2xy\,dx=x^2y+\varphi(y)$; $\partial_yU=x^2+\varphi'(y)=x^2+1\Rightarrow\varphi=y$. $U=x^2y+y$. Lavoro $A\!\to\!B$: $U(B)-U(A)$.</p></div>
+
+<div class="blk"><h3><span class="n">E9</span>Flusso con Gauss</h3>
+<p>$F=(x,y,z)$, $S=$ sfera $x^2+y^2+z^2=1$ (uscente). $\operatorname{div}F=3$. Gauss: $\displaystyle\iint_S F\cdot N\,dS=\iiint_V 3\,dV=3\cdot\tfrac43\pi=4\pi$.</p></div>
+
+<div class="blk"><h3><span class="n">E10</span>Circuitazione con Green</h3>
+<p>$\displaystyle\oint_{\partial D}(-y\,dx+x\,dy)$, $D:\,x^2+y^2\le1$ (antiorario). Green: $\partial_x(x)-\partial_y(-y)=1+1=2$, quindi $\displaystyle\iint_D 2\,dx\,dy=2\cdot\pi\cdot1^2=2\pi$.</p></div>
 
 <script>
 window.addEventListener('load',function(){
